@@ -54,65 +54,101 @@ export function render() {
             </div>
 
             <!-- Hero & Upload Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              <div class="flex flex-col gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div class="flex flex-col gap-8">
                 <div class="flex flex-col gap-4">
+                  <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary w-fit rounded-full text-xs font-bold uppercase tracking-wider">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    Step 1: AI Analysis
+                  </div>
                   <h1 class="text-slate-900 dark:text-slate-100 text-4xl md:text-5xl font-black leading-tight tracking-tight">
-                    Upload your resume to <span class="text-primary">get started</span>
+                    Upload your resume to <span class="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">get started</span>
                   </h1>
                   <p class="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
                     Our AI will analyze your professional profile, skills, and experience to tailor a realistic mock interview experience specifically for you.
                   </p>
                 </div>
+                
                 <!-- Drag & Drop Area -->
-                <div id="drop-area" class="border-2 border-dashed border-primary/30 rounded-xl p-10 bg-white/50 flex flex-col items-center justify-center gap-4 hover:border-primary transition-colors cursor-pointer group">
-                  <div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-4xl">cloud_upload</span>
+                <div id="drop-area" class="relative group">
+                  <div class="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                  <div class="relative border-2 border-dashed border-primary/30 rounded-xl p-10 bg-white dark:bg-slate-800 flex flex-col items-center justify-center gap-4 hover:border-primary transition-all cursor-pointer">
+                    <div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                      <span class="material-symbols-outlined text-4xl">cloud_upload</span>
+                    </div>
+                    <div class="text-center">
+                      <p class="text-slate-900 dark:text-slate-100 font-bold text-lg">Click to upload or drag and drop</p>
+                      <p class="text-slate-500 text-sm">PDF or DOCX (max. 10MB)</p>
+                    </div>
+                    <input class="hidden" id="resume-upload" type="file" accept=".pdf,.docx"/>
                   </div>
-                  <div class="text-center">
-                    <p class="text-slate-900 font-bold text-lg">Click to upload or drag and drop</p>
-                    <p class="text-slate-500 text-sm">PDF or DOCX (max. 10MB)</p>
-                  </div>
-                  <input class="hidden" id="resume-upload" type="file" accept=".pdf,.docx"/>
                 </div>
-                <button id="analyze-btn" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+
+                <div id="file-info" class="hidden flex items-center justify-between p-4 bg-primary/5 rounded-xl border border-primary/10">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">description</span>
+                    <div>
+                      <p id="filename" class="text-sm font-bold text-slate-900 dark:text-slate-100">resume.pdf</p>
+                      <p id="filesize" class="text-xs text-slate-500">1.2 MB</p>
+                    </div>
+                  </div>
+                  <button id="remove-file" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                  </button>
+                </div>
+
+                <button id="analyze-btn" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
                   <span class="material-symbols-outlined">analytics</span>
-                  Analyze Resume
+                  Start AI Analysis
                 </button>
               </div>
 
-              <!-- Preview Section (Post-Upload State - Initially Hidden or Placeholder) -->
-              <div id="preview-panel" class="flex flex-col gap-6 bg-white p-6 rounded-xl shadow-sm border border-primary/5">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
-                  <h3 class="font-bold text-xl text-slate-900 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">quick_reference_all</span>
-                    Analysis Preview
-                  </h3>
-                  <span id="level-badge" class="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    Ready to Upload
-                  </span>
+              <!-- Illustration & Preview Section -->
+              <div class="relative">
+                <!-- Initial Illustration -->
+                <div id="hero-illustration" class="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-700">
+                   <img alt="AI Resume Analysis" class="w-full aspect-square object-cover" src="C:/Users/neera/.gemini/antigravity/brain/57d7e73d-0320-47c7-ab7d-94b02a16fb0b/antrix_resume_analysis_illustration_1773523362562.png" />
+                   <div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
                 </div>
-                <!-- Placeholder when no file -->
-                <div id="no-preview" class="py-10 text-center text-slate-400">
-                  <span class="material-symbols-outlined text-5xl mb-2 opacity-20">description</span>
-                  <p>Upload a resume to see AI insights</p>
-                </div>
-                <!-- Dynamic Content (Initially Hidden) -->
-                <div id="analysis-content" class="hidden flex flex-col gap-6">
-                    <div class="flex flex-col gap-3">
-                      <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Detected Skills</h4>
-                      <div id="skills-list" class="flex flex-wrap gap-2"></div>
-                    </div>
-                    <div class="flex flex-col gap-3">
-                      <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Key Projects</h4>
-                      <ul id="projects-list" class="space-y-3"></ul>
-                    </div>
-                </div>
-                <div class="bg-primary/5 p-4 rounded-lg flex items-center gap-3">
-                  <span class="material-symbols-outlined text-primary">info</span>
-                  <p class="text-xs text-slate-600 leading-tight italic">
-                    This information is extracted from your resume to help our AI understand your technical background. You can refine these in the next step.
-                  </p>
+
+                <!-- Analysis Preview (Initially Hidden) -->
+                <div id="preview-panel" class="hidden absolute inset-0 flex flex-col gap-6 bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl border border-primary/10 animate-in fade-in zoom-in duration-500">
+                  <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-700 pb-4">
+                    <h3 class="font-bold text-xl text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                      <span class="material-symbols-outlined text-primary">quick_reference_all</span>
+                      AI Insights
+                    </h3>
+                    <span id="level-badge" class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      Ready
+                    </span>
+                  </div>
+                  
+                  <div id="analysis-content" class="flex flex-col gap-6 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
+                      <div class="flex flex-col gap-3">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                           <span class="size-1 bg-primary rounded-full"></span>
+                           Extracted Skills
+                        </h4>
+                        <div id="skills-list" class="flex flex-wrap gap-2"></div>
+                      </div>
+                      <div class="flex flex-col gap-3">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                           <span class="size-1 bg-primary rounded-full"></span>
+                           Experience Highlights
+                        </h4>
+                        <ul id="projects-list" class="space-y-3"></ul>
+                      </div>
+                  </div>
+
+                  <div class="mt-auto bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl flex items-start gap-3 border border-slate-100 dark:border-slate-800">
+                    <span class="material-symbols-outlined text-primary text-sm mt-0.5">verified_user</span>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                      AI analysis is complete. We've optimized your profile for <strong>Full Stack Engineering</strong> roles.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -161,9 +197,14 @@ export function init() {
   const dropArea = document.getElementById('drop-area');
   const fileInput = document.getElementById('resume-upload');
   const analyzeBtn = document.getElementById('analyze-btn');
+  const removeFileBtn = document.getElementById('remove-file');
+  const fileInfo = document.getElementById('file-info');
+  const filenameText = document.getElementById('filename');
+  const filesizeText = document.getElementById('filesize');
+  
   const navHome = document.getElementById('nav-home');
-  const analysisContent = document.getElementById('analysis-content');
-  const noPreview = document.getElementById('no-preview');
+  const previewPanel = document.getElementById('preview-panel');
+  const heroIllustration = document.getElementById('hero-illustration');
   const levelBadge = document.getElementById('level-badge');
   const skillsList = document.getElementById('skills-list');
   const projectsList = document.getElementById('projects-list');
@@ -175,43 +216,75 @@ export function init() {
   fileInput?.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      handleUpload(file);
+      showFileInfo(file);
     }
   });
 
-  function handleUpload(file) {
-    // Mock upload success and analysis
-    levelBadge.textContent = 'Senior Level';
-    levelBadge.classList.replace('bg-primary/10', 'bg-green-100');
-    levelBadge.classList.replace('text-primary', 'text-green-700');
-    
-    noPreview.classList.add('hidden');
-    analysisContent.classList.remove('hidden');
+  removeFileBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.value = '';
+    fileInfo.classList.add('hidden');
+    dropArea.classList.remove('hidden');
+    analyzeBtn.disabled = true;
+    previewPanel.classList.add('hidden');
+    heroIllustration.classList.remove('hidden');
+  });
 
-    const mockSkills = ['React.js', 'TypeScript', 'Node.js', 'AWS Cloud', 'System Design'];
-    skillsList.innerHTML = mockSkills.map(skill => `
-        <span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">${skill}</span>
-    `).join('');
-
-    const mockProjects = [
-        { title: 'E-commerce Platform Migration', desc: 'Led the transition from monolithic to microservices architecture.' },
-        { title: 'Real-time Analytics Dashboard', desc: 'Developed a custom charting engine using D3.js.' }
-    ];
-    projectsList.innerHTML = mockProjects.map(p => `
-        <li class="flex gap-3 items-start">
-            <div class="mt-1.5 size-1.5 rounded-full bg-primary flex-shrink-0"></div>
-            <p class="text-slate-700 text-sm leading-relaxed">
-                <span class="font-bold">${p.title}:</span> ${p.desc}
-            </p>
-        </li>
-    `).join('');
+  function showFileInfo(file) {
+    filenameText.textContent = file.name;
+    filesizeText.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+    fileInfo.classList.remove('hidden');
+    dropArea.classList.add('hidden');
+    analyzeBtn.disabled = false;
   }
 
   analyzeBtn?.addEventListener('click', () => {
-    // Add a loading state if needed, then navigate
-    analyzeBtn.innerHTML = '<span class="animate-spin material-symbols-outlined">autofps_select</span> Analyzing...';
+    // Start Analysis Animation
+    analyzeBtn.disabled = true;
+    analyzeBtn.innerHTML = '<span class="animate-spin material-symbols-outlined">sync</span> Analyzing Experience...';
+    
+    // Switch Visuals after a delay
     setTimeout(() => {
-        navigateTo('/role-selection');
-    }, 1500);
+        heroIllustration.classList.add('opacity-0', 'scale-95');
+        
+        setTimeout(() => {
+            heroIllustration.classList.add('hidden');
+            previewPanel.classList.remove('hidden');
+            handleMockAnalysis();
+            
+            // Final transition
+            setTimeout(() => {
+                analyzeBtn.innerHTML = 'Analysis Complete! Proceeding...';
+                analyzeBtn.classList.replace('bg-primary', 'bg-green-600');
+                
+                setTimeout(() => {
+                    navigateTo('/role-selection');
+                }, 1500);
+            }, 2000);
+        }, 500);
+    }, 800);
   });
+
+  function handleMockAnalysis() {
+    const mockSkills = ['React.js', 'TypeScript', 'Node.js', 'AWS VPC', 'Redis', 'Docker'];
+    skillsList.innerHTML = mockSkills.map(skill => `
+        <span class="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 transition-all hover:scale-105 cursor-default hover:border-primary">
+          ${skill}
+        </span>
+    `).join('');
+
+    const mockProjects = [
+        { title: 'Global SaaS Scalability', desc: 'Optimized PostgreSQL queries reducing latency by 70% for 5M+ users.' },
+        { title: 'Distributed Systems Architecture', desc: 'Designed a message queue system using RabbitMQ and Go.' }
+    ];
+    projectsList.innerHTML = mockProjects.map(p => `
+        <li class="flex gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 transition-all hover:border-primary/30 group">
+            <div class="mt-1 size-2 rounded-full bg-primary flex-shrink-0 group-hover:scale-150 transition-transform"></div>
+            <div class="flex flex-col gap-1">
+                <p class="text-slate-900 dark:text-slate-100 text-sm font-bold">${p.title}</p>
+                <p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">${p.desc}</p>
+            </div>
+        </li>
+    `).join('');
+  }
 }

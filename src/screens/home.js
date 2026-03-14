@@ -49,10 +49,21 @@ export function render() {
                   Watch Demo
                 </button>
               </div>
+              <!-- Social Proof Section -->
+              <div class="flex items-center justify-center lg:justify-start gap-4 pt-4">
+                <div class="flex -space-x-3">
+                  <img class="w-10 h-10 rounded-full border-2 border-background-light object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" />
+                  <img class="w-10 h-10 rounded-full border-2 border-background-light object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100" />
+                  <img class="w-10 h-10 rounded-full border-2 border-background-light object-cover" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=100" />
+                </div>
+                <p class="text-sm font-medium text-slate-600">
+                  Join <span class="text-primary font-bold">10,000+</span> candidates
+                </p>
+              </div>
             </div>
             <div class="flex-1 w-full max-w-[600px] lg:max-w-none">
               <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-primary/20 border-8 border-white/50">
-                <img alt="AI Interview Interface mockup" class="w-full aspect-[4/3] object-cover" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1000" />
+                <img alt="AI Interview Interface mockup" class="w-full aspect-[4/3] object-cover" src="C:/Users/neera/.gemini/antigravity/brain/57d7e73d-0320-47c7-ab7d-94b02a16fb0b/antrix_hero_image_1773523289630.png" />
                 <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
               </div>
             </div>

@@ -204,17 +204,4 @@ cython_debug/
 # Marimo
 marimo/_static/
 marimo/_lsp/
-# JavaScript / Node.js
-node_modules/
-dist/
-.next/
-out/
-build/
-.cache/
-
-# Vite
-*.local
-dist-ssr
-*.pyc
-
 __marimo__/
