@@ -1,3 +1,15 @@
+# Node / React Specific
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# Binaries & Backups
+*.exe
+*.bak
+stitch_resume_upload_analysis_bak/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
