@@ -201,4 +201,160 @@
 </div>
 </footer>
 </div>
+
+<!-- ===== MODAL OVERLAY ===== -->
+<div id="modal-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm hidden" onclick="closeModal(event)">
+  <!-- Login Modal -->
+  <div id="login-modal" class="hidden w-[90%] max-w-md bg-background-light rounded-2xl shadow-2xl p-8 relative">
+    <button onclick="closeAllModals()" class="absolute top-4 right-4 text-primary/50 hover:text-primary transition-colors text-2xl font-bold leading-none">&times;</button>
+    <h2 class="text-2xl font-bold text-primary mb-6">Welcome back</h2>
+    <form id="login-form" onsubmit="handleLogin(event)" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-semibold text-slate-600" for="login-email">Email</label>
+        <input id="login-email" type="email" placeholder="you@example.com" class="border border-primary/20 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white" required/>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-semibold text-slate-600" for="login-password">Password</label>
+        <input id="login-password" type="password" placeholder="••••••••" class="border border-primary/20 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white" required/>
+      </div>
+      <p id="login-error" class="text-red-500 text-xs hidden"></p>
+      <button type="submit" class="mt-2 w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98]">Login</button>
+    </form>
+    <p class="text-center text-sm text-slate-500 mt-4">Don't have an account? <button onclick="switchModal('signup')" class="text-primary font-bold hover:underline">Sign Up</button></p>
+  </div>
+  <!-- Sign Up Modal -->
+  <div id="signup-modal" class="hidden w-[90%] max-w-md bg-background-light rounded-2xl shadow-2xl p-8 relative">
+    <button onclick="closeAllModals()" class="absolute top-4 right-4 text-primary/50 hover:text-primary transition-colors text-2xl font-bold leading-none">&times;</button>
+    <h2 class="text-2xl font-bold text-primary mb-6">Create your account</h2>
+    <form id="signup-form" onsubmit="handleSignup(event)" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-semibold text-slate-600" for="signup-name">Full Name</label>
+        <input id="signup-name" type="text" placeholder="Jane Doe" class="border border-primary/20 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white" required/>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-semibold text-slate-600" for="signup-email">Email</label>
+        <input id="signup-email" type="email" placeholder="you@example.com" class="border border-primary/20 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white" required/>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-semibold text-slate-600" for="signup-password">Password</label>
+        <input id="signup-password" type="password" placeholder="At least 8 characters" class="border border-primary/20 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white" required minlength="8"/>
+      </div>
+      <p id="signup-error" class="text-red-500 text-xs hidden"></p>
+      <button type="submit" class="mt-2 w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98]">Create Account</button>
+    </form>
+    <p class="text-center text-sm text-slate-500 mt-4">Already have an account? <button onclick="switchModal('login')" class="text-primary font-bold hover:underline">Login</button></p>
+  </div>
+</div>
+
+<script>
+// ── Relative path to the resume upload page ──────────────────────────────────
+const RESUME_UPLOAD_URL = '../antrix_resume_upload/code.html';
+
+// ── Modal helpers ─────────────────────────────────────────────────────────────
+function openModal(name) {
+  document.getElementById('modal-overlay').classList.remove('hidden');
+  document.getElementById('login-modal').classList.add('hidden');
+  document.getElementById('signup-modal').classList.add('hidden');
+  document.getElementById(name + '-modal').classList.remove('hidden');
+}
+function closeAllModals() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeAllModals();
+}
+function switchModal(name) {
+  document.getElementById('login-modal').classList.add('hidden');
+  document.getElementById('signup-modal').classList.add('hidden');
+  document.getElementById(name + '-modal').classList.remove('hidden');
+}
+
+// ── Form submission (demo — shows success then closes) ────────────────────────
+function handleLogin(e) {
+  e.preventDefault();
+  const err = document.getElementById('login-error');
+  const email = document.getElementById('login-email').value;
+  if (!email.includes('@')) { err.textContent = 'Please enter a valid email.'; err.classList.remove('hidden'); return; }
+  err.classList.add('hidden');
+  closeAllModals();
+  // Demo: navigate to resume upload after "login"
+  window.location.href = RESUME_UPLOAD_URL;
+}
+function handleSignup(e) {
+  e.preventDefault();
+  const err = document.getElementById('signup-error');
+  const pwd = document.getElementById('signup-password').value;
+  if (pwd.length < 8) { err.textContent = 'Password must be at least 8 characters.'; err.classList.remove('hidden'); return; }
+  err.classList.add('hidden');
+  closeAllModals();
+  window.location.href = RESUME_UPLOAD_URL;
+}
+
+// ── Wire Login / Sign Up buttons in the header ────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Find all header buttons by text content
+  document.querySelectorAll('button').forEach(btn => {
+    const txt = btn.textContent.trim();
+    if (txt === 'Login') btn.addEventListener('click', () => openModal('login'));
+    if (txt === 'Sign Up') btn.addEventListener('click', () => openModal('signup'));
+  });
+
+  // ── CTA Buttons ──────────────────────────────────────────────────────────
+  document.querySelectorAll('button').forEach(btn => {
+    const txt = btn.textContent.trim();
+    if (txt === 'Start Your Preparation' || txt === 'Get Started Now') {
+      btn.addEventListener('click', () => { window.location.href = RESUME_UPLOAD_URL; });
+    }
+  });
+
+  // ── Smooth Scroll ────────────────────────────────────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+
+  // ── Mobile Hamburger Menu ────────────────────────────────────────────────
+  const nav = document.querySelector('nav.hidden.md\\:flex');
+  if (nav) {
+    const hamburger = document.createElement('button');
+    hamburger.id = 'hamburger-btn';
+    hamburger.className = 'md:hidden flex flex-col gap-1.5 p-2 text-primary';
+    hamburger.innerHTML = `<span class="w-6 h-0.5 bg-primary block transition-all"></span><span class="w-6 h-0.5 bg-primary block transition-all"></span><span class="w-6 h-0.5 bg-primary block transition-all"></span>`;
+    hamburger.setAttribute('aria-label', 'Toggle menu');
+
+    const mobileMenu = document.createElement('div');
+    mobileMenu.id = 'mobile-menu';
+    mobileMenu.className = 'md:hidden hidden absolute top-full left-0 w-full bg-background-light/95 backdrop-blur-md border-b border-primary/10 px-6 py-4 flex flex-col gap-4 z-40 shadow-lg';
+    nav.querySelectorAll('a').forEach(a => {
+      const clone = a.cloneNode(true);
+      clone.className = 'text-primary/80 hover:text-primary text-base font-semibold transition-colors py-2 border-b border-primary/5';
+      mobileMenu.appendChild(clone);
+    });
+
+    const header = document.querySelector('header');
+    if (header) {
+      header.style.position = 'sticky';
+      const inner = header.querySelector('div');
+      if (inner) inner.appendChild(hamburger);
+      header.appendChild(mobileMenu);
+      hamburger.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+    }
+  }
+
+  // ── Intersection Observer: card fade-in ──────────────────────────────────
+  const style = document.createElement('style');
+  style.textContent = `.anim-card{opacity:0;transform:translateY(24px);transition:opacity 0.55s ease,transform 0.55s ease;}.anim-card.visible{opacity:1;transform:translateY(0);}`;
+  document.head.appendChild(style);
+
+  const cards = document.querySelectorAll('#features .group');
+  cards.forEach(c => c.classList.add('anim-card'));
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('visible'); observer.unobserve(en.target); } });
+  }, { threshold: 0.15 });
+  cards.forEach(c => observer.observe(c));
+});
+</script>
 </body></html>

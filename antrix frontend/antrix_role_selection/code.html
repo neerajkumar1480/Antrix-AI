@@ -152,4 +152,43 @@
 <p class="text-slate-500 text-sm">© 2024 AI Interview Assistant. Level up your career.</p>
 </footer>
 </div>
+
+<script>
+(function () {
+  const NEXT_PAGE = '../antrix_mode_selection_updated_style/code.html';
+  const PREV_PAGE = '../antrix_resume_upload/code.html';
+
+  const industryEl = document.getElementById('industry');
+  const fieldEl    = document.getElementById('field');
+  const roleEl     = document.getElementById('role');
+  const form       = document.querySelector('form');
+  const continueBtn = form && form.querySelector('button[type="submit"]');
+
+  // Restore saved values
+  if (industryEl && sessionStorage.getItem('selectedIndustry')) industryEl.value = sessionStorage.getItem('selectedIndustry');
+  if (fieldEl    && sessionStorage.getItem('selectedField'))    fieldEl.value    = sessionStorage.getItem('selectedField');
+  if (roleEl     && sessionStorage.getItem('selectedRole'))     roleEl.value     = sessionStorage.getItem('selectedRole');
+
+  // Form submit → validate & navigate
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!industryEl.value || !fieldEl.value || !roleEl.value) {
+        alert('Please fill in all three dropdowns before continuing.');
+        return;
+      }
+      sessionStorage.setItem('selectedIndustry', industryEl.value);
+      sessionStorage.setItem('selectedField',    fieldEl.value);
+      sessionStorage.setItem('selectedRole',     roleEl.value);
+      window.location.href = NEXT_PAGE;
+    });
+  }
+
+  // Back button
+  const backBtn = document.querySelector('button.group');
+  if (backBtn && backBtn.textContent.includes('Back')) {
+    backBtn.addEventListener('click', () => { window.location.href = PREV_PAGE; });
+  }
+})();
+</script>
 </body></html>

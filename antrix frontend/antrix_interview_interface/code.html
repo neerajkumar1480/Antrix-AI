@@ -194,4 +194,101 @@
 </div>
 </footer>
 </div>
+
+<script>
+(function () {
+  const FEEDBACK_PAGE = '../antrix_feedback_dashboard/code.html';
+
+  /* ── Timer ── */
+  let seconds = 0;
+  const timerEl = document.querySelector('span.text-lg');
+  if (timerEl) {
+    setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      timerEl.textContent = m + ':' + s;
+    }, 1000);
+  }
+
+  /* ── Question counter ── */
+  let currentQ = 3, totalQ = 10;
+  const questionEl = document.querySelector('span.text-lg:not([class*="timer"])') ||
+                     [...document.querySelectorAll('.flex.flex-col.items-center span.text-lg')][1];
+
+  /* ── Sidebar transcript container ── */
+  const transcriptContainer = document.querySelector('.flex-1.p-4.overflow-y-auto');
+
+  /* ── Next Question button ── */
+  const nextBtn = document.querySelector('button.px-8');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (currentQ < totalQ) {
+        currentQ++;
+        if (questionEl) questionEl.textContent = String(currentQ).padStart(2,'0') + ' / ' + totalQ;
+        // Append a new AI question block to the sidebar transcript
+        if (transcriptContainer) {
+          const div = document.createElement('div');
+          div.className = 'space-y-1';
+          div.innerHTML = `<p class="text-[10px] font-bold text-primary/40 uppercase">Sarah • Now</p>
+            <p class="text-sm text-slate-600 dark:text-slate-300">Question ${currentQ}: Tell me about a time you led a cross-functional team to deliver under tight constraints.</p>`;
+          transcriptContainer.appendChild(div);
+          transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+        }
+      } else {
+        sessionStorage.setItem('interviewComplete', 'true');
+        window.location.href = FEEDBACK_PAGE;
+      }
+    });
+  }
+
+  /* ── Mic / Video toggles ── */
+  const micBtn = document.querySelector('button .material-symbols-outlined[textContent="mic"]')?.closest('button') ||
+                 [...document.querySelectorAll('footer button')][0];
+  const vidBtn = [...document.querySelectorAll('footer button')][1];
+  let micOn = true, vidOn = true;
+
+  function toggleButton(btn, isOn, onIcon, offIcon) {
+    const icon = btn?.querySelector('.material-symbols-outlined');
+    const label = btn?.querySelector('span:not(.material-symbols-outlined)');
+    if (!icon) return;
+    icon.textContent = isOn ? offIcon : onIcon;
+    if (label) label.textContent = isOn ? 'Unmute' : 'Mute';
+    btn.title = isOn ? 'Currently ON – click to turn OFF' : 'Currently OFF – click to turn ON';
+    btn.style.opacity = isOn ? '1' : '0.5';
+  }
+
+  if (micBtn) {
+    micBtn.addEventListener('click', () => {
+      micOn = !micOn;
+      const icon = micBtn.querySelector('.material-symbols-outlined');
+      const label = micBtn.querySelector('span:not(.material-symbols-outlined)');
+      if (icon) icon.textContent = micOn ? 'mic' : 'mic_off';
+      if (label) label.textContent = micOn ? 'Mute' : 'Unmute';
+      micBtn.style.opacity = micOn ? '1' : '0.5';
+    });
+  }
+  if (vidBtn) {
+    vidBtn.addEventListener('click', () => {
+      vidOn = !vidOn;
+      const icon = vidBtn.querySelector('.material-symbols-outlined');
+      const label = vidBtn.querySelector('span:not(.material-symbols-outlined)');
+      if (icon) icon.textContent = vidOn ? 'videocam' : 'videocam_off';
+      if (label) label.textContent = vidOn ? 'Stop Video' : 'Start Video';
+      vidBtn.style.opacity = vidOn ? '1' : '0.5';
+    });
+  }
+
+  /* ── End Interview button ── */
+  const endBtn = document.querySelector('button.border-2');
+  if (endBtn) {
+    endBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to end the interview? Your progress will be saved.')) {
+        sessionStorage.setItem('interviewComplete', 'true');
+        window.location.href = FEEDBACK_PAGE;
+      }
+    });
+  }
+})();
+</script>
 </body></html>

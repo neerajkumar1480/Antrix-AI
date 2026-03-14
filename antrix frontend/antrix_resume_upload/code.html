@@ -208,4 +208,101 @@
 </footer>
 </div>
 </div>
+
+<script>
+(function () {
+  const NEXT_PAGE = '../antrix_role_selection/code.html';
+
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const dropZone      = document.querySelector('.border-dashed');
+  const fileInput     = document.getElementById('resume-upload');
+  const analyzeBtn    = document.querySelector('button');            // first button in the upload col
+  const previewPanel  = document.querySelector('.flex.flex-col.gap-6.bg-white.p-6');
+
+  // Hide the preview panel initially
+  if (previewPanel) { previewPanel.style.opacity = '0'; previewPanel.style.transition = 'opacity 0.5s ease'; }
+
+  // Add a "Continue" button placeholder (hidden until analysis done)
+  const continueBtn = document.createElement('button');
+  continueBtn.textContent = 'Continue →';
+  continueBtn.className = 'hidden w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98]';
+  continueBtn.addEventListener('click', () => { window.location.href = NEXT_PAGE; });
+  if (analyzeBtn && analyzeBtn.parentNode) analyzeBtn.parentNode.appendChild(continueBtn);
+
+  let uploadedFile = null;
+
+  // ── File name display ─────────────────────────────────────────────────────
+  const fileNameDiv = document.createElement('div');
+  fileNameDiv.className = 'text-sm font-medium text-primary hidden flex items-center gap-2';
+  fileNameDiv.innerHTML = `<span class="material-symbols-outlined text-base">description</span><span id="file-name-text"></span>`;
+  if (dropZone) dropZone.parentNode.insertBefore(fileNameDiv, dropZone.nextSibling);
+
+  function showFileName(name) {
+    document.getElementById('file-name-text').textContent = name;
+    fileNameDiv.classList.remove('hidden');
+  }
+
+  // Error badge
+  const errorBadge = document.createElement('p');
+  errorBadge.className = 'text-red-500 text-sm hidden';
+  if (dropZone) dropZone.parentNode.insertBefore(errorBadge, dropZone.nextSibling);
+
+  function showError(msg) { errorBadge.textContent = msg; errorBadge.classList.remove('hidden'); }
+  function clearError()   { errorBadge.classList.add('hidden'); }
+
+  // ── Validate file ─────────────────────────────────────────────────────────
+  function validateFile(file) {
+    clearError();
+    const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const name = file.name.toLowerCase();
+    if (!allowed.includes(file.type) && !name.endsWith('.pdf') && !name.endsWith('.docx')) {
+      showError('Only PDF or DOCX files are accepted.'); return false;
+    }
+    if (file.size > 10 * 1024 * 1024) { showError('File must be 10 MB or smaller.'); return false; }
+    return true;
+  }
+
+  function handleFile(file) {
+    if (!validateFile(file)) return;
+    uploadedFile = file;
+    showFileName(file.name);
+    dropZone.classList.add('border-primary', 'bg-primary/5');
+  }
+
+  // ── Drop zone events ──────────────────────────────────────────────────────
+  if (dropZone) {
+    dropZone.addEventListener('click', () => fileInput && fileInput.click());
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('border-primary', 'scale-[1.01]'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('scale-[1.01]'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('scale-[1.01]');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+  }
+
+  if (fileInput) {
+    fileInput.accept = '.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+  }
+
+  // ── Analyze button ────────────────────────────────────────────────────────
+  if (analyzeBtn) {
+    analyzeBtn.addEventListener('click', () => {
+      if (!uploadedFile) { showError('Please upload a resume file first.'); return; }
+      clearError();
+      // Show spinner
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = `<span class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></span>Analyzing…`;
+      setTimeout(() => {
+        analyzeBtn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Analysis Complete`;
+        analyzeBtn.classList.replace('bg-primary', 'bg-green-600');
+        if (previewPanel) previewPanel.style.opacity = '1';
+        continueBtn.classList.remove('hidden');
+      }, 2000);
+    });
+  }
+})();
+</script>
 </body></html>

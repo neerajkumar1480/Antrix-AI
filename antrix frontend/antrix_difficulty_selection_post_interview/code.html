@@ -151,4 +151,63 @@
 </footer>
 </div>
 </div>
+
+<script>
+(function () {
+  const NEXT_PAGE = '../antrix_interview_interface/code.html';
+  const PREV_PAGE = '../antrix_mode_selection_updated_style/code.html';
+
+  let selectedDifficulty = sessionStorage.getItem('selectedDifficulty') || null;
+
+  const cards = document.querySelectorAll('.grid.grid-cols-1 > div.group');
+  const continueBtn = document.querySelector('button.flex.min-w-\\[280px\\]') ||
+                      document.querySelector('button[class*="min-w"]');
+
+  function highlightCard(card) {
+    cards.forEach(c => {
+      c.style.outline = '';
+      c.style.boxShadow = '';
+    });
+    card.style.outline = '3px solid #5F4A8B';
+    card.style.boxShadow = '0 0 0 4px rgba(95,74,139,0.15)';
+  }
+
+  // Restore selection
+  if (selectedDifficulty) {
+    cards.forEach(c => {
+      const heading = c.querySelector('h3');
+      if (heading && heading.textContent.trim() === selectedDifficulty) highlightCard(c);
+    });
+  }
+
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const heading = card.querySelector('h3');
+      selectedDifficulty = heading ? heading.textContent.trim() : 'Adaptive AI';
+      sessionStorage.setItem('selectedDifficulty', selectedDifficulty);
+      highlightCard(card);
+    });
+  });
+
+  // Continue / Generate Feedback button
+  const genBtn = document.querySelector('button.flex.min-w-\\[280px\\]') ||
+                 document.querySelector('main button');
+  if (genBtn) {
+    genBtn.addEventListener('click', () => {
+      sessionStorage.setItem('selectedDifficulty', selectedDifficulty || 'Adaptive AI');
+      window.location.href = NEXT_PAGE;
+    });
+  }
+
+  // Stepper back navigation — clicking "Mode" step goes back
+  const stepperItems = document.querySelectorAll('.flex.flex-wrap.items-center.gap-2 > div');
+  stepperItems.forEach(item => {
+    const label = item.textContent.trim().replace(/\s+/g,'');
+    if (label.includes('Mode')) {
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', () => { window.location.href = PREV_PAGE; });
+    }
+  });
+})();
+</script>
 </body></html>

@@ -217,4 +217,44 @@
 </footer>
 </div>
 </div>
+
+<script>
+(function () {
+  const HOME_PAGE = '../antrix_home_page/code.html';
+
+  /* ── Populate role from sessionStorage ── */
+  const role = sessionStorage.getItem('selectedRole') || 'Senior Product Designer';
+  const roleParaEl = document.querySelector('main p');
+  if (roleParaEl && role) {
+    roleParaEl.innerHTML = roleParaEl.innerHTML.replace('Senior Product Designer', role);
+  }
+
+  /* ── Animate progress bars on load ── */
+  const bars = document.querySelectorAll('.bg-primary.h-full.rounded-full');
+  bars.forEach(bar => {
+    const width = bar.style.width;
+    bar.style.width = '0%';
+    bar.style.transition = 'width 1.2s ease';
+    setTimeout(() => { bar.style.width = width; }, 300);
+  });
+
+  /* ── Try Again: clear session and go home ── */
+  const tryAgainBtn = document.querySelector('button .material-symbols-outlined[textContent="refresh"]')?.closest('button') ||
+    [...document.querySelectorAll('main button')].find(b => b.textContent.includes('Try Again'));
+  if (tryAgainBtn) {
+    tryAgainBtn.addEventListener('click', () => {
+      sessionStorage.clear();
+      window.location.href = HOME_PAGE;
+    });
+  }
+
+  /* ── Download Report: browser print ── */
+  const downloadBtn = [...document.querySelectorAll('main button')].find(b => b.textContent.includes('Download'));
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+      window.print();
+    });
+  }
+})();
+</script>
 </body></html>
