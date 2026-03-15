@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview | Antrix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, .7);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        @keyframes bounce-dot {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-container::-webkit-scrollbar-thumb {
+            background: rgba(95, 74, 139, .3);
+            border-radius: 10px;
+        }
+
+        .msg-ai {
+            background: #fff;
+            border: 1px solid #e8e0f7;
+            border-radius: 1rem 1rem 1rem 0;
+        }
+
+        .msg-user {
+            background: #5F4A8B;
+            color: #fff;
+            border-radius: 1rem 1rem 0 1rem;
+        }
+
+        /* Mic button states — sits on dark orb background */
+        #mic-btn {
+            transition: all .25s;
+        }
+
+        #mic-btn.state-idle {
+            background: #fff;
+            color: #5F4A8B;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, .25), 0 8px 24px rgba(0, 0, 0, .4);
+            cursor: pointer;
+        }
+
+        #mic-btn.state-idle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 6px rgba(255, 255, 255, .3), 0 12px 32px rgba(0, 0, 0, .5);
+        }
+
+        #mic-btn.state-recording {
+            background: #ef4444;
+            color: #fff;
+            cursor: pointer;
+            animation: pulse-ring 1.2s ease-in-out infinite;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, .3);
+        }
+
+        #mic-btn.state-processing {
+            background: rgba(255, 255, 255, .15);
+            color: rgba(255, 255, 255, .5);
+            cursor: not-allowed;
+        }
+
+        #mic-btn.state-disabled {
+            background: rgba(255, 255, 255, .08);
+            color: rgba(255, 255, 255, .2);
+            cursor: not-allowed;
+        }
+
+        .spin {
+            animation: spin .8s linear infinite;
+            display: inline-block;
+        }
+
+        /* Typing dots */
+        .tdot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #a78bdf;
+            animation: bounce-dot 1.2s infinite;
+        }
+
+        .tdot:nth-child(2) {
+            animation-delay: .15s;
+        }
+
+        .tdot:nth-child(3) {
+            animation-delay: .3s;
+        }
+
+        /* Report card */
+        .rh {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #5F4A8B;
+            margin: 1.2rem 0 .5rem;
+            padding-bottom: .3rem;
+            border-bottom: 1px solid #ede9f7;
+        }
+
+        .rsh {
+            font-size: .9rem;
+            font-weight: 600;
+            color: #374151;
+            margin: .8rem 0 .3rem;
+        }
+
+        .rl {
+            padding-left: 1.2rem;
+            margin: .4rem 0 .8rem;
+        }
+
+        .rl li {
+            margin-bottom: .35rem;
+            list-style: disc;
+        }
+
+        .rb p {
+            margin-bottom: .5rem;
+        }
+
+        .rb strong {
+            color: #1f2937;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-[#FEFACD] to-white min-h-screen flex flex-col text-gray-800 antialiased">
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur border-b border-purple-100">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-[#5F4A8B] font-bold text-xl cursor-pointer"
+                onclick="location.href='../index.html'">
+                <span class="material-symbols-rounded">rocket_launch</span> Antrix
+            </div>
+            <div id="ai-status"
+                class="flex items-center gap-2 bg-gray-100 px-4 py-1.5 rounded-full text-sm font-medium text-gray-400 transition-all duration-300">
+                <div id="status-dot" class="w-2 h-2 rounded-full bg-gray-300"></div>
+                <span id="status-text">Ready</span>
+            </div>
+            <a href="../antrix_home_page/code.html"
+                class="flex items-center gap-2 text-gray-400 hover:text-red-500 transition text-sm">
+                <span class="material-symbols-rounded">close</span> Exit
+            </a>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="flex flex-col max-w-6xl mx-auto w-full px-4 pt-24 pb-6" style="height:100vh">
+
+        <!-- Header bar -->
+        <div
+            class="flex justify-between items-center mb-4 bg-white/70 px-5 py-3.5 rounded-2xl shadow-sm border border-white">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-rounded text-[#5F4A8B]">terminal</span>
+                </div>
+                <div>
+                    <h2 class="font-bold text-gray-800" id="interview-title">AI Mock Interview</h2>
+                    <p class="text-xs text-gray-400">Antrix · Powered by Gemma 3 27B</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Body — Orb LEFT, Chat RIGHT -->
+        <div class="flex gap-4 flex-grow overflow-hidden">
+
+            <!-- Orb panel — LEFT (full height, larger) -->
+            <div class="hidden md:flex bg-[#0d0d1a] rounded-3xl shadow-2xl overflow-hidden flex-col items-center justify-center relative border border-gray-800 flex-shrink-0"
+                style="width:42%">
+                <div id="ai-orb-canvas" class="absolute inset-0 z-10"></div>
+                <!-- Mic status overlay inside orb -->
+                <div class="absolute bottom-16 w-full text-center z-20 px-4">
+                    <div id="orb-mic-label"
+                        class="inline-flex items-center gap-2 bg-black/60 backdrop-blur px-4 py-2 rounded-full border border-white/10 transition-all duration-300">
+                        <span class="material-symbols-rounded text-white/60 text-sm" id="orb-mic-icon">mic_off</span>
+                        <span class="text-[11px] tracking-wide font-medium text-white/60" id="orb-mic-text">Click
+                            Start</span>
+                    </div>
+                </div>
+                <!-- Mic button inside orb at bottom -->
+                <div class="absolute bottom-5 w-full flex flex-col items-center gap-2 z-20">
+                    <button id="mic-btn"
+                        class="state-disabled w-16 h-16 rounded-full flex items-center justify-center shadow-lg"
+                        onclick="MIC.handleClick()">
+                        <span class="material-symbols-rounded text-3xl" id="mic-icon">mic</span>
+                    </button>
+                    <span id="mic-status" class="text-[10px] text-white/50 text-center leading-tight w-28">Click
+                        Start</span>
+                </div>
+                <div class="absolute top-4 w-full text-center z-20">
+                    <div
+                        class="inline-flex items-center gap-2 bg-black/50 backdrop-blur px-3 py-1.5 rounded-full border border-white/10">
+                        <div class="w-2 h-2 rounded-full bg-[#5F4A8B] animate-pulse"></div>
+                        <span class="text-[10px] tracking-widest uppercase font-semibold text-white/60">Neural
+                            Core</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat panel — RIGHT -->
+            <div
+                class="flex-1 bg-white/60 backdrop-blur-lg rounded-3xl border border-white shadow-xl flex flex-col overflow-hidden">
+
+                <!-- Messages -->
+                <div id="chat-container" class="flex-grow overflow-y-auto p-5 scroll-smooth">
+                    <div id="transcript" class="flex flex-col gap-3">
+                        <div class="flex justify-start">
+                            <div class="msg-ai max-w-[85%] p-4 shadow-sm text-sm leading-relaxed text-gray-700">
+                                <p>👋 <strong>Welcome to Antrix!</strong> AI interview coach powered by Gemma 3 27B.</p>
+                                <br>
+                                <p class="text-[#5F4A8B] font-semibold">How it works:</p>
+                                <p>1️⃣ Click <strong>"Start Interview"</strong> to begin</p>
+                                <p>2️⃣ Tap the 🎙 mic on the left — turns <span
+                                        class="text-red-500 font-bold">red</span> when recording</p>
+                                <p>3️⃣ Speak your answer clearly</p>
+                                <p>4️⃣ Tap mic again to submit</p>
+                                <p>5️⃣ Say <strong>"give me a review"</strong> anytime to get your report!</p>
+                                <br>
+                                <p class="text-amber-600 text-xs">⚠️ Use Google Chrome · Allow microphone when prompted
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls — no mic button here anymore (moved to orb panel) -->
+                <div class="p-4 bg-white/80 border-t border-purple-100 flex items-center gap-3">
+
+                    <button id="btn-start"
+                        class="flex-1 bg-[#5F4A8B] text-white py-3 px-5 rounded-xl font-semibold text-sm shadow-lg hover:bg-[#7A62A5] hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+                        <span class="material-symbols-rounded text-sm">play_arrow</span> Start Interview
+                    </button>
+
+                    <button id="btn-end"
+                        class="hidden flex-1 bg-red-50 text-red-500 py-3 px-5 rounded-xl font-semibold text-sm border border-red-200 hover:bg-red-100 transition flex justify-center items-center gap-2">
+                        <span class="material-symbols-rounded text-sm">stop</span> End Interview
+                    </button>
+
+                    <button id="btn-download"
+                        class="hidden flex-1 bg-gradient-to-r from-[#5F4A8B] to-[#7A62A5] text-white py-3 px-5 rounded-xl font-semibold text-sm shadow hover:shadow-lg transition-all flex justify-center items-center gap-2">
+                        <span class="material-symbols-rounded text-sm">download</span> Download Report
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+     ALL JAVASCRIPT — fully self-contained, no module imports needed
+═══════════════════════════════════════════════════════════════════ -->
+    <script>
+        // ── CONFIG — paste your key here ─────────────────────────────────────────────
+        const GEMINI_API_KEY = 'AIzaSyBE77vuCkz2JHlgrkn6rr1F7k6jL9rLP8o';
+        const GEMMA_MODEL = 'gemma-3-27b-it';
+
+        // ── STATE ─────────────────────────────────────────────────────────────────────
+        let isRecording = false;
+        let isProcessing = false;
+        let interviewActive = false;
+        let interviewEnded = false;
+        let currentQ = 0;
+        let transcriptLog = [];   // [{role:'ai'|'user', message:'...'}]
+        let chatHistory = [];   // [{role:'user'|'model', parts:[{text}]}]
+
+        let recognition = null;
+        let finalTranscript = '';
+        let resolveStop = null;
+
+        // Session data (set from your landing page via sessionStorage)
+        const ROLE = (() => { try { return sessionStorage.getItem('antrix_role') || 'Software Engineer'; } catch (e) { return 'Software Engineer'; } })();
+        const DIFFICULTY = (() => { try { return sessionStorage.getItem('antrix_difficulty') || 'adaptive'; } catch (e) { return 'adaptive'; } })();
+        const RESUME = (() => { try { return sessionStorage.getItem('antrix_resume') || ''; } catch (e) { return ''; } })();
+
+        // ── DOM refs ──────────────────────────────────────────────────────────────────
+        const micBtn = document.getElementById('mic-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const micStatus = document.getElementById('mic-status');
+        const transcript = document.getElementById('transcript');
+        const chatContainer = document.getElementById('chat-container');
+        const btnStart = document.getElementById('btn-start');
+        const btnEnd = document.getElementById('btn-end');
+        const btnDownload = document.getElementById('btn-download');
+
+        // Set title
+        document.getElementById('interview-title').textContent = ROLE + ' Interview';
+
+        // ── STATUS PILL ───────────────────────────────────────────────────────────────
+        const STATUS = {
+            idle: { bg: 'bg-gray-100', dot: 'bg-gray-300', text: 'text-gray-400', label: 'Ready' },
+            thinking: { bg: 'bg-purple-50', dot: 'bg-purple-400', text: 'text-purple-600', label: 'Thinking…' },
+            speaking: { bg: 'bg-blue-50', dot: 'bg-blue-400', text: 'text-blue-600', label: 'Speaking' },
+            listening: { bg: 'bg-green-50', dot: 'bg-green-400', text: 'text-green-600', label: 'Listening…' },
+            analysing: { bg: 'bg-amber-50', dot: 'bg-amber-400', text: 'text-amber-600', label: 'Analysing…' },
+        };
+        function setStatus(s) {
+            const st = STATUS[s] || STATUS.idle;
+            const pill = document.getElementById('ai-status');
+            const dot = document.getElementById('status-dot');
+            pill.className = `flex items-center gap-2 ${st.bg} px-4 py-1.5 rounded-full text-sm font-medium ${st.text} transition-all duration-300`;
+            dot.className = `w-2 h-2 rounded-full ${st.dot}`;
+            document.getElementById('status-text').textContent = st.label;
+        }
+
+        // ── MIC BUTTON CONTROLLER ─────────────────────────────────────────────────────
+        const MIC = {
+            setIdle() {
+                micBtn.className = 'state-idle w-14 h-14 rounded-full flex items-center justify-center';
+                micIcon.textContent = 'mic';
+                micIcon.className = 'material-symbols-rounded text-2xl';
+                micStatus.textContent = 'Tap mic to answer';
+                isProcessing = false;
+            },
+            setRecording() {
+                micBtn.className = 'state-recording w-14 h-14 rounded-full flex items-center justify-center';
+                micIcon.textContent = 'stop_circle';
+                micIcon.className = 'material-symbols-rounded text-2xl';
+                micStatus.textContent = '🎙 Speaking… tap to submit';
+            },
+            setProcessing() {
+                micBtn.className = 'state-processing w-14 h-14 rounded-full flex items-center justify-center';
+                micIcon.textContent = 'sync';
+                micIcon.className = 'material-symbols-rounded text-2xl spin';
+                micStatus.textContent = 'Processing…';
+                isProcessing = true;
+            },
+            setDisabled(reason) {
+                micBtn.className = 'state-disabled w-14 h-14 rounded-full flex items-center justify-center';
+                micIcon.textContent = 'mic_off';
+                micIcon.className = 'material-symbols-rounded text-2xl';
+                micStatus.textContent = reason || 'Please wait…';
+                isProcessing = false;
+            },
+            handleClick() {
+                // Ignore if disabled or already processing
+                if (micBtn.classList.contains('state-disabled') || isProcessing) return;
+                if (isRecording) {
+                    stopMic();
+                } else {
+                    startMic();
+                }
+            }
+        };
+
+        // ── SPEECH TO TEXT ────────────────────────────────────────────────────────────
+        function checkSTTSupport() {
+            return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+        }
+
+        function startMic() {
+            if (!checkSTTSupport()) {
+                addMessage('ai', '❌ Voice recognition requires <strong>Google Chrome</strong>. Please open this page in Chrome.');
+                return;
+            }
+
+            // Stop any previous session cleanly
+            if (recognition) { try { recognition.abort(); } catch (e) { } recognition = null; }
+
+            isProcessing = true;
+            finalTranscript = '';
+            micStatus.textContent = 'Starting mic…';
+
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SR();
+
+            // ── KEY SETTINGS ──────────────────────────────────────────────
+            // continuous:false  → Chrome gives ONE clean final result per session
+            //                     This is the most reliable mode for push-to-talk
+            // interimResults:true → user sees live text while speaking
+            recognition.lang = 'en-US';
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            recognition.continuous = false;   // ← was true — this was causing empty transcripts
+            // ──────────────────────────────────────────────────────────────
+
+            recognition.onstart = () => {
+                console.log('[MIC] Open ✅');
+                isRecording = true;
+                isProcessing = false;
+                MIC.setRecording();
+                setStatus('listening');
+            };
+
+            recognition.onresult = (e) => {
+                // Collect ALL results (final + interim) for maximum reliability
+                let collected = '';
+                for (let i = 0; i < e.results.length; i++) {
+                    collected += e.results[i][0].transcript + ' ';
+                }
+                finalTranscript = collected.trim();
+                console.log('[MIC] Live transcript:', finalTranscript);
+                micStatus.textContent = '"' + finalTranscript.slice(0, 45) + (finalTranscript.length > 45 ? '…' : '') + '"';
+            };
+
+            recognition.onerror = (e) => {
+                console.error('[MIC] Error:', e.error);
+                isRecording = false;
+                isProcessing = false;
+
+                const msgs = {
+                    'not-allowed': '❌ <strong>Microphone blocked.</strong> Click the 🔒 lock icon in Chrome → set Microphone to "Allow" → reload the page.',
+                    'network': '⚠️ Speech recognition needs internet. Check your connection and try again.',
+                    'no-speech': null,   // silent — user just didn't speak, mic will reset
+                    'aborted': null,   // intentional stop, ignore
+                };
+                const msg = msgs[e.error];
+                if (msg) addMessage('ai', msg);
+
+                MIC.setIdle();
+                setStatus('idle');
+            };
+
+            recognition.onend = () => {
+                console.log('[MIC] Ended. Final transcript:', '"' + finalTranscript + '"');
+                isRecording = false;
+
+                if (finalTranscript && finalTranscript.trim().length > 0) {
+                    // We have speech — submit it
+                    MIC.setProcessing();
+                    setStatus('thinking');
+                    handleAnswer(finalTranscript.trim());
+                } else {
+                    // Nothing captured — reset mic so user can try again
+                    MIC.setIdle();
+                    setStatus('idle');
+                    if (!isProcessing) {
+                        micStatus.textContent = 'Nothing heard — tap mic to retry';
+                    }
+                }
+            };
+
+            try {
+                recognition.start();
+                console.log('[MIC] recognition.start() called');
+            } catch (err) {
+                console.error('[MIC] start() threw:', err);
+                isProcessing = false;
+                MIC.setIdle();
+                addMessage('ai', '❌ Could not access microphone: ' + err.message);
+            }
+        }
+
+        function stopMic() {
+            console.log('[MIC] stopMic() called. isRecording:', isRecording);
+            if (!recognition) { MIC.setIdle(); return; }
+
+            isRecording = false;
+            MIC.setProcessing();
+            setStatus('thinking');
+
+            try {
+                // Stop cleanly — triggers onend which calls handleAnswer
+                recognition.stop();
+            } catch (e) {
+                console.warn('[MIC] stop() error:', e);
+                // Fallback: submit whatever we have
+                handleAnswer(finalTranscript);
+            }
+        }
+
+        // ── TEXT TO SPEECH ────────────────────────────────────────────────────────────
+        let ttsUtterance = null;
+        function speak(text) {
+            return new Promise((resolve) => {
+                if (!window.speechSynthesis) { resolve(); return; }
+                window.speechSynthesis.cancel();
+                ttsUtterance = new SpeechSynthesisUtterance(text);
+                ttsUtterance.rate = 0.93;
+                ttsUtterance.pitch = 1.0;
+                ttsUtterance.volume = 1.0;
+                // Pick a natural English voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const preferred = voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('google'))
+                    || voices.find(v => v.lang.startsWith('en'))
+                    || voices[0];
+                if (preferred) ttsUtterance.voice = preferred;
+                ttsUtterance.onend = resolve;
+                ttsUtterance.onerror = resolve;
+                window.speechSynthesis.speak(ttsUtterance);
+            });
+        }
+        function stopSpeaking() { if (window.speechSynthesis) window.speechSynthesis.cancel(); }
+
+        // Voices load async in some browsers — pre-load them
+        if (window.speechSynthesis) {
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        }
+
+        // ── CHAT UI ───────────────────────────────────────────────────────────────────
+        function addMessage(role, html) {
+            const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const wrap = document.createElement('div');
+            wrap.className = `flex w-full mb-3 ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            const bubble = document.createElement('div');
+            bubble.className = `max-w-[80%] rounded-2xl p-4 shadow-sm text-sm leading-relaxed
+        ${role === 'user'
+                    ? 'bg-[#5F4A8B] text-white rounded-br-none'
+                    : 'bg-white/90 text-gray-800 rounded-bl-none border border-gray-100'}`;
+            bubble.innerHTML = `<div>${html}</div>
+        <div class="text-xs mt-2 ${role === 'user' ? 'text-gray-200' : 'text-gray-400'} flex items-center gap-1">
+            ${role === 'ai' ? '<span class="material-symbols-rounded text-[13px]">smart_toy</span> Gemma 3' : 'You'} &bull; ${ts}
+        </div>`;
+            wrap.appendChild(bubble);
+            transcript.appendChild(wrap);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        let typingEl = null;
+        function showTyping() {
+            typingEl = document.createElement('div');
+            typingEl.className = 'flex w-full mb-3 justify-start';
+            typingEl.innerHTML = `<div class="bg-white/90 border border-gray-100 rounded-2xl rounded-bl-none p-4 shadow-sm flex gap-2 items-center">
+        <div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>
+    </div>`;
+            transcript.appendChild(typingEl);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        function hideTyping() { if (typingEl) { typingEl.remove(); typingEl = null; } }
+
+        function updateCounter() { /* removed */ }
+
+        // ── GEMMA API ─────────────────────────────────────────────────────────────────
+        async function callGemma(messages, maxTokens = 350) {
+            if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GOOGLE_AI_STUDIO_API_KEY') {
+                throw new Error('API key not set — open code.html and replace YOUR_GOOGLE_AI_STUDIO_API_KEY');
+            }
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMMA_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: messages,
+                    generationConfig: { maxOutputTokens: maxTokens, temperature: 0.75, topP: 0.9 }
+                })
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                const msg = err?.error?.message || `HTTP ${res.status}`;
+                if (res.status === 429) throw new Error('Rate limit — wait a moment and try again.');
+                throw new Error(msg);
+            }
+            const data = await res.json();
+            return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+        }
+
+        function buildMessages(lastUserAnswer) {
+            // Passes the FULL readable transcript + last answer directly in the prompt.
+            // This prevents Gemma from using [placeholder] text instead of real answers.
+            const diffMap = {
+                beginner: 'Ask simple friendly questions, minimal technical depth.',
+                intermediate: 'Mix technical and behavioural questions, moderate difficulty.',
+                advanced: 'Deep probing questions, challenge edge cases, be demanding.',
+                adaptive: 'Start moderate, adapt difficulty based on answer quality.'
+            };
+
+            // Build readable transcript so Gemma can see the real conversation
+            const txLines = transcriptLog.map(t =>
+                (t.role === 'ai' ? 'INTERVIEWER' : 'CANDIDATE') + ': ' + t.message
+            ).join('\n\n');
+
+            const prompt = `You are a professional job interviewer doing a mock interview.
+Role: ${ROLE}
+Difficulty: ${diffMap[DIFFICULTY] || diffMap.adaptive}
+${RESUME ? 'Resume:\n"""\n' + RESUME + '\n"""' : '(No resume provided)'}
+
+Full conversation so far:
+---
+${txLines || '(Just started)'}
+---
+
+The candidate just answered: "${lastUserAnswer}"
+
+Now ask your next interview question.
+Rules:
+1. Ask ONE question only, maximum 2 sentences.
+2. MUST reference something SPECIFIC from what the candidate actually said above.
+3. Never write [mention something] or any placeholder — use their real words.
+4. No markdown, no bullet points, plain spoken English only.
+5. Do not give any feedback or evaluation.`;
+
+            return [
+                { role: 'user', parts: [{ text: 'You are a professional job interviewer. Say OK to confirm.' }] },
+                { role: 'model', parts: [{ text: 'OK.' }] },
+                { role: 'user', parts: [{ text: prompt }] }
+            ];
+        }
+
+        // ── AI SPEAK + LOG ────────────────────────────────────────────────────────────
+        async function aiSay(text) {
+            transcriptLog.push({ role: 'ai', message: text });
+            chatHistory.push({ role: 'model', parts: [{ text }] });
+            addMessage('ai', text);
+            setStatus('speaking');
+            await speak(text);
+            setStatus('idle');
+        }
+
+        // ── ASK NEXT QUESTION ─────────────────────────────────────────────────────────
+        async function askFirstQuestion() {
+            MIC.setDisabled('AI is thinking…');
+            showTyping();
+            setStatus('thinking');
+            try {
+                const diffMap = {
+                    beginner: 'Ask simple friendly questions, minimal technical depth.',
+                    intermediate: 'Mix technical and behavioural questions, moderate difficulty.',
+                    advanced: 'Deep probing questions, challenge edge cases, be demanding.',
+                    adaptive: 'Start moderate, adapt difficulty based on answer quality.'
+                };
+
+                // Pool of varied opening angles — pick one randomly each session
+                const openingAngles = [
+                    'Ask the candidate to introduce themselves and walk you through their background.',
+                    'Ask what motivated them to pursue a career in this field.',
+                    'Ask them to describe their most recent role or project and what they worked on.',
+                    'Ask what they are most proud of in their career so far.',
+                    'Ask them to describe a challenge they faced recently and how they handled it.',
+                    'Ask what specific skills or experiences make them a strong fit for this role.',
+                    'Ask them to walk you through a project they built from scratch.',
+                    'Ask what they are currently learning or working on outside of work.',
+                    'Ask them to describe their ideal working environment and team dynamic.',
+                    'Ask what drew them to apply for this specific role.'
+                ];
+                const angle = openingAngles[Math.floor(Math.random() * openingAngles.length)];
+
+                const resumeSection = RESUME ? ('Candidate resume: ' + RESUME) : '(No resume provided)';
+                const prompt = [
+                    'You are a professional job interviewer starting a mock interview.',
+                    'Role being interviewed for: ' + ROLE,
+                    'Difficulty: ' + (diffMap[DIFFICULTY] || diffMap.adaptive),
+                    resumeSection,
+                    '',
+                    'IMPORTANT: This is the very first question of the interview. The candidate has NOT spoken yet.',
+                    'Opening angle to use: ' + angle,
+                    'Do NOT start with Tell me about yourself — rephrase it naturally based on the angle above.',
+                    'ONE question only, 1-2 sentences, plain spoken English, no markdown, no placeholders.'
+                ].join('\n');
+
+                const msgs = [
+                    { role: 'user', parts: [{ text: 'You are a job interviewer. Say OK.' }] },
+                    { role: 'model', parts: [{ text: 'OK.' }] },
+                    { role: 'user', parts: [{ text: prompt }] }
+                ];
+                const question = await callGemma(msgs, 200);
+                hideTyping();
+                await aiSay(question);
+            } catch (err) {
+                hideTyping();
+                addMessage('ai', '⚠️ ' + err.message);
+                setStatus('idle');
+            } finally {
+                MIC.setIdle();
+            }
+        }
+
+        async function askNextQuestion(lastAnswer) {
+            MIC.setDisabled('AI is thinking…');
+            showTyping();
+            setStatus('thinking');
+            try {
+                const msgs = buildMessages(lastAnswer);
+                const question = await callGemma(msgs, 300);
+                hideTyping();
+                await aiSay(question);
+            } catch (err) {
+                hideTyping();
+                addMessage('ai', '⚠️ ' + err.message);
+                setStatus('idle');
+            } finally {
+                MIC.setIdle();
+            }
+        }
+
+        // ── HANDLE USER ANSWER ────────────────────────────────────────────────────────
+        async function handleAnswer(text) {
+            MIC.setProcessing();
+
+            if (!text || text.trim() === '') {
+                addMessage('ai', "I didn't catch that — please tap the mic and try again.");
+                setStatus('idle');
+                MIC.setIdle();
+                return;
+            }
+
+            // Log answer
+            transcriptLog.push({ role: 'user', message: text });
+            chatHistory.push({ role: 'user', parts: [{ text }] });
+            addMessage('user', text);
+
+            // Detect if user wants to end — they can say these phrases anytime
+            const endPhrases = [
+                'give me review', 'give me a review', 'end the interview',
+                'end interview', 'stop the interview', 'stop interview',
+                'generate report', 'show report', 'i am done', "i'm done",
+                'that is all', "that's all", 'finish interview', 'finished'
+            ];
+            const lowerText = text.toLowerCase().trim();
+            const userWantsEnd = endPhrases.some(p => lowerText.includes(p));
+
+            if (userWantsEnd) {
+                await generateReport();
+            } else {
+                currentQ++;
+                // Pass the actual answer text so Gemma references it specifically
+                await askNextQuestion(text);
+            }
+        }
+
+        // ── START INTERVIEW ───────────────────────────────────────────────────────────
+        btnStart.addEventListener('click', async () => {
+            btnStart.classList.add('hidden');
+            btnEnd.classList.remove('hidden');
+            interviewActive = true;
+            currentQ = 1;
+
+            const welcome = `Welcome to your AI mock interview for the ${ROLE} role, powered by Gemma 3. I will ask you questions until you say "give me a review" or click End Interview. Tap the mic to speak, tap again when done. Ready? Let us begin!`;
+            await aiSay(welcome);
+            await askFirstQuestion();
+        });
+
+        // ── END INTERVIEW EARLY ───────────────────────────────────────────────────────
+        btnEnd.addEventListener('click', async () => {
+            if (interviewEnded) return;
+            interviewEnded = true;
+            stopSpeaking();
+            if (recognition && isRecording) { recognition.stop(); }
+            MIC.setDisabled('Interview ended');
+            btnEnd.classList.add('hidden');
+            addMessage('ai', 'Interview ended early. Generating your report…');
+            await generateReport();
+        });
+
+        // ── GENERATE REPORT ───────────────────────────────────────────────────────────
+        async function generateReport() {
+            MIC.setDisabled('Generating report…');
+            btnEnd.classList.add('hidden');
+            showTyping();
+            setStatus('analysing');
+
+            await aiSay("That concludes the interview. I am now analysing your performance and generating a detailed report. Give me a moment.");
+
+            const tx = transcriptLog
+                .map(t => `${t.role === 'ai' ? 'INTERVIEWER' : 'CANDIDATE'}: ${t.message}`)
+                .join('\n\n');
+
+            const prompt = `You are an expert interview coach. Analyse this mock interview and write a detailed report.
+
+${RESUME ? `RESUME:\n"""\n${RESUME}\n"""\n` : ''}ROLE: ${ROLE} | DIFFICULTY: ${DIFFICULTY}
+
+TRANSCRIPT:
+"""
+${tx}
+"""
+
+Use EXACTLY these headings:
+
+## Overall Performance Score
+Score /10 and a one-line verdict.
+
+## What You Did Well
+3-4 specific strengths with examples from their actual answers.
+
+## Key Mistakes and Weaknesses
+3-5 weaknesses. Be direct. Reference actual answers.
+
+## Resume Issues Found
+Gaps, vague language, missing metrics, ATS issues, missing keywords. If no resume, list common issues for this role.
+
+## How to Improve
+4-5 concrete tips. Mention STAR method where relevant.
+
+## Category Scores
+Rate each /10:
+- Communication and Clarity: X/10
+- Technical Knowledge: X/10
+- Problem-Solving: X/10
+- Confidence and Presence: X/10
+- Resume Quality: X/10
+
+## Next Steps
+3 specific actions for the next 7 days.
+
+Be honest, specific, and helpful.`;
+
+            const reportMessages = [
+                { role: 'user', parts: [{ text: 'You are an expert interview coach. Analyse transcripts and generate structured reports. Acknowledge.' }] },
+                { role: 'model', parts: [{ text: 'Understood. Ready to analyse and generate a structured interview report.' }] },
+                { role: 'user', parts: [{ text: prompt }] }
+            ];
+
+            try {
+                const report = await callGemma(reportMessages, 1500);
+                hideTyping();
+
+                try { sessionStorage.setItem('antrix_report', report); } catch (e) { }
+                try { sessionStorage.setItem('antrix_transcript', JSON.stringify(transcriptLog)); } catch (e) { }
+
+                renderReport(report);
+                btnDownload.classList.remove('hidden');
+                btnDownload.style.display = 'flex';
+                setStatus('idle');
+            } catch (err) {
+                hideTyping();
+                addMessage('ai', '⚠️ Could not generate report: ' + err.message);
+                setStatus('idle');
+            }
+        }
+
+        // ── RENDER REPORT CARD ────────────────────────────────────────────────────────
+        function renderReport(md) {
+            const html = md
+                .replace(/^## (.+)$/gm, '<h3 class="rh">$1</h3>')
+                .replace(/^### (.+)$/gm, '<h4 class="rsh">$1</h4>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>\n?)+/g, '<ul class="rl">$&</ul>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n\n/g, '</p><p>')
+                .trim();
+
+            const card = document.createElement('div');
+            card.className = 'w-full mt-4';
+            card.innerHTML = `
+        <div class="bg-white border-2 border-[#5F4A8B]/20 rounded-3xl overflow-hidden shadow-xl">
+            <div class="bg-gradient-to-r from-[#5F4A8B] to-[#7A62A5] px-6 py-5 flex items-center gap-3">
+                <span class="text-white text-2xl">📋</span>
+                <div>
+                    <h2 class="text-white font-bold text-lg">Interview Report</h2>
+                    <p class="text-white/70 text-xs">${ROLE} · ${DIFFICULTY} · Gemma 3 27B</p>
+                </div>
+            </div>
+            <div class="rb p-6 text-sm leading-relaxed text-gray-700 max-h-[600px] overflow-y-auto">
+                <p>${html}</p>
+            </div>
+        </div>`;
+            transcript.appendChild(card);
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ── DOWNLOAD ──────────────────────────────────────────────────────────────────
+        btnDownload.addEventListener('click', () => {
+            const report = (() => { try { return sessionStorage.getItem('antrix_report') || ''; } catch (e) { return ''; } })();
+            const lines = transcriptLog.map(t => `[${t.role === 'ai' ? 'Interviewer' : 'You'}]:\n${t.message}`).join('\n\n---\n\n');
+            const full = `ANTRIX INTERVIEW TRANSCRIPT\nRole: ${ROLE} | Difficulty: ${DIFFICULTY} | Model: Gemma 3 27B\nDate: ${new Date().toLocaleString()}\n\n${'='.repeat(60)}\nCONVERSATION\n${'='.repeat(60)}\n\n${lines}\n\n${'='.repeat(60)}\nAI PERFORMANCE REPORT\n${'='.repeat(60)}\n\n${report}`;
+            const a = document.createElement('a');
+            a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(full);
+            a.download = `antrix_interview_${Date.now()}.txt`;
+            a.click();
+        });
+
+        // ── API KEY WARNING ───────────────────────────────────────────────────────────
+        if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GOOGLE_AI_STUDIO_API_KEY') {
+            setTimeout(() => {
+                addMessage('ai',
+                    '⚠️ <strong>API key missing.</strong> Open <code>code.html</code>, find <code>GEMINI_API_KEY</code> near the top of the &lt;script&gt; block, and replace it with your key from ' +
+                    '<a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#5F4A8B;text-decoration:underline">aistudio.google.com</a>.'
+                );
+            }, 400);
+        }
+
+        // ── THREE.JS ORB (optional eye candy) ────────────────────────────────────────
+        (async () => {
+            try {
+                const THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
+                const container = document.getElementById('ai-orb-canvas');
+                if (!container) return;
+                // Make canvas fill parent fully
+                container.style.width = '100%';
+                container.style.height = '100%';
+
+                const scene = new THREE.Scene();
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                renderer.domElement.style.width = '100%';
+                renderer.domElement.style.height = '100%';
+                container.appendChild(renderer.domElement);
+
+                function getSize() {
+                    return { w: container.clientWidth || 400, h: container.clientHeight || 600 };
+                }
+                const sz = getSize();
+                renderer.setSize(sz.w, sz.h);
+                const camera = new THREE.PerspectiveCamera(50, sz.w / sz.h, 0.1, 100);
+                camera.position.z = 5;
+
+                const group = new THREE.Group();
+                scene.add(group);
+
+                const coreMat = new THREE.MeshStandardMaterial({ color: 0x00BFFF, emissive: 0x00BFFF, emissiveIntensity: .7, transparent: true, opacity: .95, roughness: .1, metalness: .8 });
+                const core = new THREE.Mesh(new THREE.SphereGeometry(1.6, 64, 64), coreMat);
+                group.add(core);
+
+                const wireMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true, transparent: true, opacity: .35 });
+                const wire = new THREE.Mesh(new THREE.IcosahedronGeometry(2.0, 3), wireMat);
+                group.add(wire);
+
+                scene.add(new THREE.AmbientLight(0xffffff, .3));
+                const ptLight = new THREE.PointLight(0x00ffff, 2, 20);
+                scene.add(ptLight);
+
+                let orbState = 'idle';
+                const clock = new THREE.Clock();
+
+                // Watch status dot colour to drive orb state
+                const observer = new MutationObserver(() => {
+                    const txt = document.getElementById('status-text').textContent;
+                    if (txt.includes('Listening')) orbState = 'listening';
+                    else if (txt.includes('Speak')) orbState = 'speaking';
+                    else if (txt.includes('Think') || txt.includes('Analys')) orbState = 'thinking';
+                    else orbState = 'idle';
+                });
+                observer.observe(document.getElementById('status-text'), { childList: true, characterData: true, subtree: true });
+
+                (function animate() {
+                    requestAnimationFrame(animate);
+                    const t = clock.getElapsedTime();
+                    group.position.y = Math.sin(t * 2) * .1;
+
+                    if (orbState === 'idle') {
+                        core.rotation.y += .005; wire.rotation.y -= .002; wire.rotation.x += .003;
+                        group.scale.lerp(new THREE.Vector3(1, 1, 1), .05);
+                        coreMat.emissiveIntensity = .5 + Math.sin(t * 2) * .1;
+                        wireMat.opacity = .2;
+                    } else if (orbState === 'speaking') {
+                        core.rotation.y += .02; wire.rotation.y -= .01;
+                        const p = 1 + Math.sin(t * 12) * .05;
+                        group.scale.lerp(new THREE.Vector3(p, p, p), .2);
+                        coreMat.emissiveIntensity = .8 + Math.sin(t * 24) * .3;
+                        wireMat.opacity = .6;
+                    } else if (orbState === 'listening') {
+                        core.rotation.y += .005; wire.rotation.y -= .008;
+                        const r = 1 + Math.sin(t * 8) * .04;
+                        group.scale.lerp(new THREE.Vector3(r, r, r), .1);
+                        coreMat.emissiveIntensity = .7;
+                        wireMat.opacity = .8;
+                    } else {
+                        core.rotation.y += .03; wire.rotation.y += .03; wire.rotation.x += .03;
+                        group.scale.lerp(new THREE.Vector3(.9, .9, .9), .1);
+                        coreMat.emissiveIntensity = .3 + Math.sin(t * 5) * .4;
+                        wireMat.opacity = .4;
+                    }
+                    renderer.render(scene, camera);
+                })();
+
+                // Keep canvas in sync when the orb panel resizes
+                new ResizeObserver(() => {
+                    const s = getSize();
+                    camera.aspect = s.w / s.h;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(s.w, s.h);
+                }).observe(container);
+
+            } catch (e) { console.warn('Orb failed (non-critical):', e); }
+        })();
+    </script>
+</body>
+
+</html>

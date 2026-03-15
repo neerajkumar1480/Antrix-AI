@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#5F4A8B",
+                    "primary-light": "#7A62A5",
+                    "background-light": "#FEFACD",
+                    "background-dark": "#16161c",
+                    "accent-soft": "#ece8f5"
+                },
+                fontFamily: { "display": ["Space Grotesk", "sans-serif"] }
+            }
+        }
+    }
+</script>
+<title>Select Difficulty | Antrix</title>
+<style>
+    body { font-family: 'Space Grotesk', sans-serif; }
+
+    .diff-card {
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+    }
+    .diff-card:hover { transform: translateY(-4px); border-color: #5F4A8B; box-shadow: 0 8px 30px rgba(95,74,139,0.15); }
+    .diff-card.selected { border-color: #5F4A8B; background: white; }
+    .diff-card.selected .card-icon-wrap { background: #5F4A8B; color: white; }
+    .diff-card.selected .card-title { color: #5F4A8B; }
+
+    /* Adaptive card — always highlighted */
+    .diff-card.adaptive-card { background: #5F4A8B; color: white; border-color: #5F4A8B; }
+    .diff-card.adaptive-card .card-icon-wrap { background: rgba(255,255,255,0.2); color: white; }
+    .diff-card.adaptive-card .card-title { color: white; }
+    .diff-card.adaptive-card .card-desc { color: rgba(255,255,255,0.8); }
+    .diff-card.adaptive-card .card-label { color: rgba(255,255,255,0.6); }
+    .diff-card.adaptive-card .card-best { color: rgba(255,255,255,0.9); }
+    .diff-card.adaptive-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(95,74,139,0.4); }
+    .diff-card.adaptive-card.selected { border-color: white; box-shadow: 0 0 0 3px #5F4A8B; }
+
+    .recommended-badge {
+        position: absolute; top: -12px; right: 16px;
+        background: #5F4A8B; color: white;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+        padding: 3px 10px; border-radius: 99px; text-transform: uppercase;
+    }
+    .adaptive-card .recommended-badge { background: white; color: #5F4A8B; }
+
+    #btn-generate {
+        transition: all 0.2s ease;
+    }
+    #btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+    #btn-generate:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(95,74,139,0.35); }
+</style>
+</head>
+
+<body class="bg-background-light font-display min-h-screen">
+
+<!-- Nav -->
+<nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-primary/10">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2 text-primary font-bold text-xl cursor-pointer" onclick="window.location.href='../index.html'">
+            <span class="material-symbols-rounded">rocket_launch</span> Antrix
+        </div>
+        <a href="../antrix_home_page/code.html" class="flex items-center gap-2 text-gray-400 hover:text-red-500 transition text-sm">
+            <span class="material-symbols-rounded">close</span> Exit
+        </a>
+    </div>
+</nav>
+
+<main class="pt-24 pb-16 px-4 max-w-5xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs text-gray-400 mb-8 flex-wrap">
+        <span class="hover:text-primary cursor-pointer" onclick="window.location.href='../antrix_resume_upload/code.html'">Resume</span>
+        <span class="material-symbols-rounded text-sm">chevron_right</span>
+        <span class="hover:text-primary cursor-pointer" onclick="window.location.href='../antrix_role_selection/code.html'">Role</span>
+        <span class="material-symbols-rounded text-sm">chevron_right</span>
+        <span class="hover:text-primary cursor-pointer" onclick="window.location.href='../antrix_mode_selection/code.html'">Mode</span>
+        <span class="material-symbols-rounded text-sm">chevron_right</span>
+        <span class="font-semibold text-primary px-2 py-0.5 bg-primary/10 rounded-full">Difficulty</span>
+        <span class="material-symbols-rounded text-sm">chevron_right</span>
+        <span>Interview</span>
+        <span class="material-symbols-rounded text-sm">chevron_right</span>
+        <span>Feedback</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="mb-8">
+        <div class="flex justify-between items-center mb-1.5">
+            <span class="text-xs text-gray-400 uppercase font-semibold tracking-wider">Step 4 of 6</span>
+            <span class="text-xs text-primary font-semibold">67%</span>
+        </div>
+        <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full transition-all" style="width: 67%"></div>
+        </div>
+    </div>
+
+    <!-- Heading -->
+    <div class="mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Select Evaluation Rigor</h1>
+        <p class="text-gray-500">Choose the difficulty level for the AI to analyze your interview performance.</p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10" id="card-grid">
+
+        <!-- Beginner -->
+        <div class="diff-card bg-white rounded-2xl p-7 shadow-sm relative" data-level="beginner" onclick="selectCard(this)">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-5 transition-all">
+                <span class="material-symbols-rounded text-3xl text-gray-500">sentiment_satisfied</span>
+            </div>
+            <h3 class="card-title text-lg font-bold text-gray-800 mb-2">Beginner</h3>
+            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-5">
+                Focuses on communication style and basic confidence markers.
+            </p>
+            <div class="border-t border-gray-100 pt-4">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Best For</p>
+                <p class="card-best text-sm font-semibold text-gray-700">Confidence building</p>
+            </div>
+        </div>
+
+        <!-- Intermediate -->
+        <div class="diff-card bg-white rounded-2xl p-7 shadow-sm relative" data-level="intermediate" onclick="selectCard(this)">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5 transition-all">
+                <span class="material-symbols-rounded text-3xl text-blue-500">trending_up</span>
+            </div>
+            <h3 class="card-title text-lg font-bold text-gray-800 mb-2">Intermediate</h3>
+            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-5">
+                Balanced check on technical accuracy and delivery.
+            </p>
+            <div class="border-t border-gray-100 pt-4">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Best For</p>
+                <p class="card-best text-sm font-semibold text-gray-700">General assessment</p>
+            </div>
+        </div>
+
+        <!-- Advanced -->
+        <div class="diff-card bg-white rounded-2xl p-7 shadow-sm relative" data-level="advanced" onclick="selectCard(this)">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mb-5 transition-all">
+                <span class="material-symbols-rounded text-3xl text-red-500">psychology</span>
+            </div>
+            <h3 class="card-title text-lg font-bold text-gray-800 mb-2">Advanced</h3>
+            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-5">
+                Critical evaluation of depth, logic, and edge cases.
+            </p>
+            <div class="border-t border-gray-100 pt-4">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Best For</p>
+                <p class="card-best text-sm font-semibold text-gray-700">High-stakes prep</p>
+            </div>
+        </div>
+
+        <!-- Adaptive AI — pre-selected -->
+        <div class="diff-card adaptive-card rounded-2xl p-7 shadow-sm relative selected" data-level="adaptive" onclick="selectCard(this)">
+            <div class="recommended-badge">Recommended</div>
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all">
+                <span class="material-symbols-rounded text-3xl">auto_awesome</span>
+            </div>
+            <h3 class="card-title text-lg font-bold mb-2">Adaptive AI</h3>
+            <p class="card-desc text-sm leading-relaxed mb-5">
+                AI evaluates based on the actual difficulty of the conversation.
+            </p>
+            <div class="border-t border-white/20 pt-4">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest mb-1">Best For</p>
+                <p class="card-best text-sm font-semibold">Comprehensive report</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="flex flex-col items-center gap-3">
+        <button id="btn-generate"
+            class="bg-primary text-white font-bold text-base px-10 py-4 rounded-2xl shadow-lg flex items-center gap-2"
+            onclick="goToInterview()">
+            Generate Feedback
+            <span class="material-symbols-rounded">bar_chart</span>
+        </button>
+        <p class="text-xs text-gray-400 flex items-center gap-1">
+            <span class="material-symbols-rounded text-sm">info</span>
+            Choosing a higher difficulty results in more detailed and critical feedback.
+        </p>
+    </div>
+
+</main>
+
+<script>
+    let selectedLevel = 'adaptive'; // default
+
+    function selectCard(el) {
+        // Remove selected from all non-adaptive cards
+        document.querySelectorAll('.diff-card:not(.adaptive-card)').forEach(c => {
+            c.classList.remove('selected');
+            c.querySelector('.card-icon-wrap').style.background = '';
+            c.querySelector('.card-icon-wrap').style.color = '';
+        });
+
+        const isAdaptive = el.classList.contains('adaptive-card');
+
+        if (!isAdaptive) {
+            // Deselect adaptive
+            const adaptive = document.querySelector('.adaptive-card');
+            adaptive.classList.remove('selected');
+
+            // Select this card
+            el.classList.add('selected');
+        } else {
+            // Re-select adaptive
+            el.classList.add('selected');
+        }
+
+        selectedLevel = el.dataset.level;
+        updateButton();
+    }
+
+    function updateButton() {
+        const btn = document.getElementById('btn-generate');
+        btn.disabled = false;
+
+        const labels = {
+            beginner: 'Start Beginner Interview',
+            intermediate: 'Start Intermediate Interview',
+            advanced: 'Start Advanced Interview',
+            adaptive: 'Generate Feedback'
+        };
+        btn.innerHTML = `${labels[selectedLevel] || 'Generate Feedback'} <span class="material-symbols-rounded">bar_chart</span>`;
+    }
+
+    function goToInterview() {
+        // Save difficulty to sessionStorage so interview engine can use it
+        try {
+            sessionStorage.setItem('antrix_difficulty', selectedLevel);
+        } catch(e) {}
+        window.location.href = '../antrix_interview_interface/code.html';
+    }
+
+    // Init button state
+    updateButton();
+</script>
+
+</body>
+</html>
