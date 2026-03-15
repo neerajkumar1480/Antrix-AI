@@ -2,6 +2,8 @@
 node_modules/
 *.exe
 *.bak
+.env
+.env.*
 
 # But ALLOW Git to see your actual project work
 !stitch_resume_upload_analysis_bak/
