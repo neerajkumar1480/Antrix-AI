@@ -281,8 +281,10 @@ Project developed as part of a **hackathon project** focused on improving interv
 
 Contributors:
 
-* Your Name
-* Team Members
+* Neeraj kumar (@neerajkumar1480)
+* Parnav (@devparnav)
+* Harshit Maheshwari (@harshitkisoch)
+* Nityansh (@Codedbynit)
 
 ---
 
