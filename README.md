@@ -1,4 +1,6 @@
-# Antrix-
+# Antrix
+
+# "Note: This was a 24-hour hackathon prototype. Live demo is currently offline for maintenance/API updates."
 
 # 🎯 AI Interview Preparation Assistant
 
