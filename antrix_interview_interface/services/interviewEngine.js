@@ -6,7 +6,7 @@ import { AIOrb } from '../components/aiOrb.js';
 
 // ── Gemma 3 27B via Google AI Studio ────────────────────────────────────────
 // ⭐ REPLACE THIS WITH YOUR KEY: https://aistudio.google.com/app/apikey
-const GEMINI_API_KEY = 'AIzaSyBE77vuCkz2JHlgrkn6rr1F7k6jL9rLP8o';
+const GEMINI_API_KEY = 'AIzaSyDDFo8wXUQlCaE4vu5ln5QCxVJAeOTqOd0';
 const GEMMA_MODEL = 'gemma-3-27b-it';
 
 async function askGemmaWithHistory(history, maxTokens = 400) {

@@ -117,57 +117,21 @@
                             </button>
 </div>
 <!-- Preview Section (Post-Upload State) -->
-<div class="flex flex-col gap-6 bg-white p-6 rounded-xl shadow-sm border border-primary/5">
+<div id="preview-section" class="flex flex-col gap-6 bg-white p-6 rounded-xl shadow-sm border border-primary/5">
 <div class="flex justify-between items-center border-b border-slate-100 pb-4">
 <h3 class="font-bold text-xl text-slate-900 flex items-center gap-2">
 <span class="material-symbols-outlined text-primary">quick_reference_all</span>
                                     Analysis Preview
                                 </h3>
-<span class="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                                    Senior Level
-                                </span>
 </div>
-<!-- Detected Skills -->
-<div class="flex flex-col gap-3">
-<h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Detected Skills</h4>
-<div class="flex flex-wrap gap-2">
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">React.js</span>
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">TypeScript</span>
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">Node.js</span>
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">AWS Cloud</span>
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">System Design</span>
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">GraphQL</span>
-<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">+4 more</span>
-</div>
-</div>
-<!-- Detected Projects -->
-<div class="flex flex-col gap-3">
-<h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Key Projects</h4>
-<ul class="space-y-3">
-<li class="flex gap-3 items-start">
-<div class="mt-1.5 size-1.5 rounded-full bg-primary flex-shrink-0"></div>
-<p class="text-slate-700 text-sm leading-relaxed">
-<span class="font-bold">E-commerce Platform Migration:</span> Led the transition from monolithic to microservices architecture, improving scalability by 40%.
-                                        </p>
-</li>
-<li class="flex gap-3 items-start">
-<div class="mt-1.5 size-1.5 rounded-full bg-primary flex-shrink-0"></div>
-<p class="text-slate-700 text-sm leading-relaxed">
-<span class="font-bold">Real-time Analytics Dashboard:</span> Developed a custom charting engine using D3.js for high-volume data visualization.
-                                        </p>
-</li>
-<li class="flex gap-3 items-start">
-<div class="mt-1.5 size-1.5 rounded-full bg-primary flex-shrink-0"></div>
-<p class="text-slate-700 text-sm leading-relaxed">
-<span class="font-bold">Automated CI/CD Pipeline:</span> Reduced deployment time by 60% through Docker orchestration and Jenkins automation.
-                                        </p>
-</li>
-</ul>
+<div id="preview-content" class="flex flex-col gap-3 items-center justify-center p-8 text-slate-400">
+    <span class="material-symbols-outlined text-4xl mb-2">document_scanner</span>
+    <p class="text-sm font-medium text-center">Upload a resume to extract key details and skills</p>
 </div>
 <div class="bg-primary/5 p-4 rounded-lg flex items-center gap-3">
 <span class="material-symbols-outlined text-primary">info</span>
 <p class="text-xs text-slate-600 leading-tight italic">
-                                    This information is extracted from your resume to help our AI understand your technical background. You can refine these in the next step.
+                                    This information is based on your uploaded resume to help our AI understand your technical background. You can refine these details in the next step.
                                 </p>
 </div>
 </div>
@@ -209,42 +173,183 @@
 </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('resume-upload');
-        const analyzeButton = document.getElementById('analyze-button');
-        const uploadText = document.getElementById('upload-text');
+(function () {
+  const NEXT_PAGE = '../antrix_role_selection/code.html';
+  const GEMINI_API_KEY = 'AIzaSyDDFo8wXUQlCaE4vu5ln5QCxVJAeOTqOd0';
+  const GEMMA_MODEL = 'gemma-3-27b-it';
 
-        // Handle click on the upload area
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const dropZone      = document.getElementById('upload-area') || document.querySelector('.border-dashed');
+  const fileInput     = document.getElementById('resume-upload');
+  const analyzeBtn    = document.getElementById('analyze-button') || document.querySelector('button'); 
+  const previewSection = document.getElementById('preview-section');
+  const previewContent = document.getElementById('preview-content');
+  const uploadText    = document.getElementById('upload-text') || {textContent: ''};
 
-        // Handle file selection
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                const fileName = e.target.files[0].name;
-                uploadText.textContent = `Selected: ${fileName}`;
-                uploadArea.classList.add('border-primary');
-            }
-        });
+  if (previewSection) { previewSection.style.transition = 'opacity 0.5s ease'; }
 
-        // Handle analyze button click
-        analyzeButton.addEventListener('click', () => {
-            // Save resume text to sessionStorage for AI to use
-            const file = fileInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try { sessionStorage.setItem('antrix_resume', e.target.result.slice(0, 8000)); } catch(err) {}
-                    window.location.href = '../antrix_role_selection/code.html';
-                };
-                reader.onerror = () => { window.location.href = '../antrix_role_selection/code.html'; };
-                reader.readAsText(file);
-            } else {
-                window.location.href = '../antrix_role_selection/code.html';
-            }
-        });
+  const continueBtn = document.createElement('button');
+  continueBtn.textContent = 'Continue →';
+  continueBtn.className = 'hidden w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-[0.98]';
+  continueBtn.addEventListener('click', () => { window.location.href = NEXT_PAGE; });
+  if (analyzeBtn && analyzeBtn.parentNode) analyzeBtn.parentNode.appendChild(continueBtn);
+
+  let uploadedFile = null;
+
+  const fileNameDiv = document.createElement('div');
+  fileNameDiv.className = 'text-sm font-medium text-primary hidden flex items-center gap-2 mt-2';
+  fileNameDiv.innerHTML = `<span class="material-symbols-outlined text-base">description</span><span id="file-name-text"></span>`;
+  if (dropZone) dropZone.parentNode.insertBefore(fileNameDiv, dropZone.nextSibling);
+
+  function showFileName(name) {
+    const el = document.getElementById('file-name-text');
+    if (el) el.textContent = name;
+    fileNameDiv.classList.remove('hidden');
+  }
+
+  const errorBadge = document.createElement('p');
+  errorBadge.className = 'text-red-500 text-sm hidden mt-2';
+  if (dropZone) dropZone.parentNode.insertBefore(errorBadge, dropZone.nextSibling);
+
+  function showError(msg) { errorBadge.textContent = msg; errorBadge.classList.remove('hidden'); }
+  function clearError()   { errorBadge.classList.add('hidden'); }
+
+  function validateFile(file) {
+    clearError();
+    const allowed = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const name = file.name.toLowerCase();
+    if (!allowed.includes(file.type) && !name.endsWith('.pdf') && !name.endsWith('.docx') && !name.endsWith('.txt')) {
+      showError('Only PDF, DOCX or TXT files are accepted.'); return false;
+    }
+    if (file.size > 10 * 1024 * 1024) { showError('File must be 10 MB or smaller.'); return false; }
+    return true;
+  }
+
+  function handleFile(file) {
+    if (!validateFile(file)) return;
+    uploadedFile = file;
+    showFileName(file.name);
+    if (uploadText && uploadText.style) uploadText.textContent = `Selected: ${file.name}`;
+    if (dropZone) dropZone.classList.add('border-primary', 'bg-primary/5');
+    
+    if (previewContent) {
+        previewContent.className = 'flex flex-col gap-4';
+        previewContent.innerHTML = `
+            <div class="flex flex-col gap-2">
+                <p class="text-slate-700 text-sm leading-relaxed"><span class="font-bold">File:</span> ${file.name} (${(file.size / 1024).toFixed(2)} KB)</p>
+            </div>
+            <p class="text-primary text-sm font-medium mt-2">
+                Ready for analysis. Click the button above to proceed.
+            </p>
+        `;
+    }
+  }
+
+  if (dropZone) {
+    dropZone.addEventListener('click', () => fileInput && fileInput.click());
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('border-primary', 'scale-[1.01]'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('scale-[1.01]'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('scale-[1.01]');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
     });
+  }
+
+  if (fileInput) {
+    fileInput.accept = '.pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+  }
+
+  // ── Analyze button ────────────────────────────────────────────────────────
+  if (analyzeBtn) {
+    analyzeBtn.addEventListener('click', async () => {
+      if (!uploadedFile) { showError('Please upload a resume file first.'); return; }
+      clearError();
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = `<span class="animate-spin inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></span>Analyzing...`;
+      
+      if (previewSection && previewContent) {
+        previewSection.classList.remove('hidden');
+        previewSection.style.opacity = '1';
+        previewContent.className = 'flex flex-col gap-4';
+        previewContent.innerHTML = `
+            <div class="flex flex-col gap-2">
+                <p class="text-slate-700 text-sm leading-relaxed"><span class="font-bold">File:</span> ${uploadedFile.name} (${(uploadedFile.size / 1024).toFixed(2)} KB)</p>
+            </div>
+            <p class="text-primary text-sm font-medium mt-2">
+                Extracting details with AI...
+            </p>
+        `;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          const resumeText = e.target.result.slice(0, 8000);
+          try {
+              sessionStorage.setItem('antrix_resume', resumeText);
+              
+              const prompt = "Extract the top technical skills and overall experience level from the following resume text. Respond strictly in JSON format with two keys: 'skills' (an array of up to 8 strings) and 'experience' (a short string like 'Junior Level', 'Mid-Senior Level', 'Senior'). Do not include any markdown formatting or code blocks. Resume text: " + resumeText;
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMMA_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+              const res = await fetch(url, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    contents: [{role: "user", parts: [{text: prompt}]}],
+                    generationConfig: { temperature: 0.2 }
+                  })
+              });
+              
+              if (!res.ok) throw new Error("API request failed");
+              const data = await res.json();
+              let textResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+              
+              if (textResponse.startsWith('\`\`\`json')) {
+                  textResponse = textResponse.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+              } else if (textResponse.startsWith('\`\`\`')) {
+                  textResponse = textResponse.replace(/\`\`\`/g, '').trim();
+              }
+              
+              const parsed = JSON.parse(textResponse);
+              const skillsHTML = (parsed.skills || []).map(s => `<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">${s}</span>`).join('');
+              
+              analyzeBtn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Analysis Complete`;
+              analyzeBtn.classList.replace('bg-primary', 'bg-green-600');
+              
+              if (previewContent) {
+                 previewContent.innerHTML = `
+                      <div class="flex flex-col gap-2">
+                          <p class="text-slate-700 text-sm leading-relaxed"><span class="font-bold">File:</span> ${uploadedFile.name} (${(uploadedFile.size / 1024).toFixed(2)} KB)</p>
+                      </div>
+                      <div class="flex flex-col gap-2 mt-2">
+                          <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Extracted Skills</h4>
+                          <div class="flex flex-wrap gap-2">
+                              ${skillsHTML || '<span class="text-slate-500 text-sm">No skills detected</span>'}
+                          </div>
+                      </div>
+                      <div class="flex flex-col gap-2 mt-2">
+                          <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Experience Level</h4>
+                          <p class="text-slate-700 text-sm font-medium">${parsed.experience || 'Not detected'}</p>
+                      </div>
+                      <p class="text-primary text-sm font-bold mt-2">
+                          Successfully Processed. Click Continue to proceed.
+                      </p>
+                  `;
+              }
+              continueBtn.classList.remove('hidden');
+          } catch (err) {
+              console.error(err);
+              showError("Failed to extract details from the resume. Proceeding with basic info.");
+              analyzeBtn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Analysis Complete`;
+              analyzeBtn.classList.replace('bg-primary', 'bg-green-600');
+              continueBtn.classList.remove('hidden');
+          }
+      };
+      reader.onerror = () => { showError("Failed to read file"); };
+      reader.readAsText(uploadedFile);
+    });
+  }
+})();
 </script>
 </body></html>
