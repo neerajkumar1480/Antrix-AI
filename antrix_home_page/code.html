@@ -37,6 +37,7 @@
             font-family: 'Space Grotesk', sans-serif;
         }
         .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
@@ -51,7 +52,7 @@
 </a>
 <nav class="hidden md:flex items-center gap-10">
 <a class="text-primary/80 hover:text-primary text-sm font-semibold transition-colors" href="#features" style="">Features</a>
-<a class="text-primary/80 hover:text-primary text-sm font-semibold transition-colors" href="#pricing" style="">Pricing</a>
+<a class="text-primary/80 hover:text-primary text-sm font-semibold transition-colors" href="../pricing_page.html" style="">Pricing</a>
 <a class="text-primary/80 hover:text-primary text-sm font-semibold transition-colors" href="#testimonials" style="">Testimonials</a>
 </nav>
 <div class="flex items-center gap-3">
@@ -70,8 +71,8 @@
 <div class="flex flex-col gap-8 flex-1 text-center lg:text-left">
 <div class="flex flex-col gap-4">
 <span class="inline-block mx-auto lg:mx-0 w-fit px-4 py-1.5 bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest rounded-full" style="">
-                                AI-Powered Career Growth
-                            </span>
+    Built with Gemini AI
+</span>
 <h1 class="text-primary text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight" style="">
                                 Master Your Next Interview<br/>with <span class="" style="color: rgba(95, 74, 139, 0.6); font-style: italic; font-size: 4.5rem; letter-spacing: -0.025em;">Antrix</span></h1>
 <p class="text-slate-700 text-lg md:text-xl font-medium leading-relaxed max-w-xl mx-auto lg:mx-0" style="">
@@ -109,27 +110,59 @@
 <h2 class="text-primary text-3xl md:text-5xl font-bold tracking-tight" style="">Powerful Features for Your Success</h2>
 <p class="text-slate-600 text-lg max-w-2xl" style="">Our platform leverages cutting-edge AI to simulate the pressure of a real interview while providing the safety of a practice environment.</p>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- 1. Resume Based Interview -->
 <div class="group bg-white/60 p-8 rounded-xl border border-primary/5 hover:border-primary/20 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
 <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-3xl" style="">description</span>
+<span class="material-symbols-outlined text-3xl">description</span>
 </div>
-<h3 class="text-primary text-xl font-bold mb-3" style="">Resume Analysis</h3>
-<p class="text-slate-600 leading-relaxed" style="">Upload your CV for tailored question generation based on your actual experience and target role requirements.</p>
+<h3 class="text-primary text-xl font-bold mb-3">Resume Based Interview</h3>
+<p class="text-slate-600 leading-relaxed">AI analyzes your CV to generate highly relevant, role-specific questions for a personalized experience.</p>
 </div>
+
+<!-- 2. Voice Based Interview -->
 <div class="group bg-white/60 p-8 rounded-xl border border-primary/5 hover:border-primary/20 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
 <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-3xl" style="">videocam</span>
+<span class="material-symbols-outlined text-3xl">mic</span>
 </div>
-<h3 class="text-primary text-xl font-bold mb-3" style="">Mock Interviews</h3>
-<p class="text-slate-600 leading-relaxed" style="">Practice in a realistic environment with our advanced video and voice recognition system that captures body language and tone.</p>
+<h3 class="text-primary text-xl font-bold mb-3">Voice Based Interview</h3>
+<p class="text-slate-600 leading-relaxed">Practice verbal cues, tone, and pacing with our advanced conversational AI engine.</p>
 </div>
+
+<!-- 3. Video Based Interview -->
 <div class="group bg-white/60 p-8 rounded-xl border border-primary/5 hover:border-primary/20 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
 <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-<span class="material-symbols-outlined text-3xl" style="">insights</span>
+<span class="material-symbols-outlined text-3xl">videocam</span>
 </div>
-<h3 class="text-primary text-xl font-bold mb-3" style="">AI-Powered Feedback</h3>
-<p class="text-slate-600 leading-relaxed" style="">Get detailed analytics on your communication style, pace, sentiment, and the technical accuracy of your responses.</p>
+<h3 class="text-primary text-xl font-bold mb-3">Video Based Interview</h3>
+<p class="text-slate-600 leading-relaxed">Get deep insights into body language, eye contact, and facial expressions with real-time video analysis.</p>
+</div>
+
+<!-- 4. Automated Marking -->
+<div class="group bg-white/60 p-8 rounded-xl border border-primary/5 hover:border-primary/20 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">fact_check</span>
+</div>
+<h3 class="text-primary text-xl font-bold mb-3">Automated Marking</h3>
+<p class="text-slate-600 leading-relaxed">Receive instant, objective scoring on your technical responses, communication skills, and overall performance.</p>
+</div>
+
+<!-- 5. Goal Oriented Interview -->
+<div class="group bg-white/60 p-8 rounded-xl border border-primary/5 hover:border-primary/20 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">track_changes</span>
+</div>
+<h3 class="text-primary text-xl font-bold mb-3">Goal Oriented Interview</h3>
+<p class="text-slate-600 leading-relaxed">Set specific career targets and face customized challenges scaled to your desired role and level.</p>
+</div>
+
+<!-- 6. Progress Tracker -->
+<div class="group bg-white/60 p-8 rounded-xl border border-primary/5 hover:border-primary/20 hover:bg-white hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">trending_up</span>
+</div>
+<h3 class="text-primary text-xl font-bold mb-3">Progress Tracker</h3>
+<p class="text-slate-600 leading-relaxed">Monitor your improvement over time with detailed analytics, performance history, and feedback timelines.</p>
 </div>
 </div>
 </section>

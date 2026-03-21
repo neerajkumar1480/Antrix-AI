@@ -5,7 +5,29 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        .material-symbols-outlined, .material-symbols-rounded {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'liga';
+        }
+        .material-symbols-rounded {
+            font-family: 'Material Symbols Rounded' !important;
+        }
+    </style>
 <script id="tailwind-config">
     tailwind.config = {
         darkMode: "class",
@@ -30,80 +52,120 @@
     .diff-card {
         cursor: pointer;
         border: 2px solid transparent;
-        transition: all 0.2s ease;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.7);
     }
-    .diff-card:hover { transform: translateY(-4px); border-color: #5F4A8B; box-shadow: 0 8px 30px rgba(95,74,139,0.15); }
-    .diff-card.selected { border-color: #5F4A8B; background: white; }
-    .diff-card.selected .card-icon-wrap { background: #5F4A8B; color: white; }
+    .diff-card:hover { 
+        transform: translateY(-12px); 
+        border-color: #5F4A8B; 
+        box-shadow: 0 20px 40px rgba(95,74,139,0.12);
+        background: rgba(255, 255, 255, 0.95);
+        z-index: 10;
+    }
+    .diff-card.selected { 
+        border-color: #5F4A8B; 
+        background: white; 
+        box-shadow: 0 12px 30px rgba(95,74,139,0.2);
+    }
+    .diff-card.selected .card-icon-wrap { background: #5F4A8B; color: white; transform: scale(1.1); }
     .diff-card.selected .card-title { color: #5F4A8B; }
 
-    /* Adaptive card — always highlighted */
-    .diff-card.adaptive-card { background: #5F4A8B; color: white; border-color: #5F4A8B; }
+    /* Adaptive card - Antigravity Theme */
+    .diff-card.adaptive-card { 
+        background: #5F4A8B; 
+        color: white; 
+        border-color: #5F4A8B; 
+        backdrop-filter: none;
+    }
     .diff-card.adaptive-card .card-icon-wrap { background: rgba(255,255,255,0.2); color: white; }
     .diff-card.adaptive-card .card-title { color: white; }
     .diff-card.adaptive-card .card-desc { color: rgba(255,255,255,0.8); }
     .diff-card.adaptive-card .card-label { color: rgba(255,255,255,0.6); }
     .diff-card.adaptive-card .card-best { color: rgba(255,255,255,0.9); }
-    .diff-card.adaptive-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(95,74,139,0.4); }
-    .diff-card.adaptive-card.selected { border-color: white; box-shadow: 0 0 0 3px #5F4A8B; }
+    .diff-card.adaptive-card:hover { 
+        transform: translateY(-12px); 
+        box-shadow: 0 25px 50px rgba(95,74,139,0.4); 
+    }
+    .diff-card.adaptive-card.selected { border-color: white; box-shadow: 0 0 0 4px rgba(95,74,139,0.5); }
 
     .recommended-badge {
-        position: absolute; top: -12px; right: 16px;
-        background: #5F4A8B; color: white;
-        font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-        padding: 3px 10px; border-radius: 99px; text-transform: uppercase;
+        position: absolute; 
+        top: 0; 
+        right: 0;
+        background: white; 
+        color: #5F4A8B;
+        font-size: 10px; 
+        font-weight: 800; 
+        letter-spacing: 0.1em;
+        padding: 5px 12px; 
+        border-radius: 0 14px 0 14px; 
+        text-transform: uppercase;
+        box-shadow: -2px 2px 10px rgba(0,0,0,0.1);
     }
-    .adaptive-card .recommended-badge { background: white; color: #5F4A8B; }
 
     #btn-generate {
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-    #btn-generate:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(95,74,139,0.35); }
+    #btn-generate:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(95,74,139,0.3); }
 </style>
 </head>
 
 <body class="bg-background-light font-display min-h-screen">
 
 <!-- Nav -->
-<nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-primary/10">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-2 text-primary font-bold text-xl cursor-pointer" onclick="window.location.href='../index.html'">
-            <span class="material-symbols-rounded">rocket_launch</span> Antrix
-        </div>
-        <a href="../antrix_home_page/code.html" class="flex items-center gap-2 text-gray-400 hover:text-red-500 transition text-sm">
-            <span class="material-symbols-rounded">close</span> Exit
-        </a>
-    </div>
-</nav>
+<header class="flex items-center justify-between border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 sticky top-0 z-50">
+<div class="flex items-center gap-2.5 cursor-pointer" onclick="window.location.href='../antrix_home_page/code.html'">
+    <img alt="Antrix Logo" class="h-8 w-auto" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYIAAAFCCAIAAABzcE1qAAAQAElEQVR4Aez9+ZsbR5L3CZoFkElSEkXqKh11q6qrq3t6+p3ZZ/e3/f+f3dl93+46dFC87yPvCzfC52NmEYEIIIBEJpNkUlWub5jb7eYeHo4AsqTKekvaSa8Hlhj/kdT9Xg/0ag0R1BRvnGW4OSwOWTr0ow36/QvGoD8A9bSIy1B3OwfvaX0ivX7fsDjfuqbf6/2M0fMWE3S2haywhiloS+SlUGWypKkIkH+2JALq64AI6prX51evNcPNAX9V0VorBVExyIW3qIDsVebQBK2UwdTdQjNHcQhUesSK95woVBQIVKPBGaTZ3N1uU1KnfstQNr3WkHTBZ1G<truncated 68 bytes>37zPLs8mzyfPs9Hw0PhzlbPie0Z+8Gz6+Y+l70D6X2fTyPHX6mP5/L03H/W360TOfxNlS/wH7p1C5pXQyMhMv86MhXwXUa+H1Nq+Y3+fD9LMMfO9L3pXpZ69iXp8Xp6x6h69K0lYclzW2yJ0vS2K7x0qS7tS7v/6N9pMkybI9YnN9o/fFld4X98/3+Z7T6V7oXrnVv3p9+fL1wZUr3SubvYV+O0mSRvIAZId9pZ4v9I3zUf8iZ+fIuU60Vb0dZq80Gv1u69JC8/K53pvrjYv9dCltNidTfC0K6A0K2RAnA53p98N7O9mDXT5+U/GvYp/fipLNRuPiYufaUvPKcPLvPz778oOdR0/Gk/0sz0K886Z5mPFeP98Z39mZPNzND8ZshnJzgeTfC0rU76Y005XWpUtLi+cX+p12ksYvID6Z6GkY5yM/yB8fhBzuZx8/Hb+/kx9kqBqM8eRMLxM8SjR7uA50PtnmO47v7ox++HB0cDs/HofDUUAsVCHH9D6vT7C/SIn6J/yEny8i0Zon+XicHx89v3f8pX8M7A9O9rZ3nj3eP9idZJkGv5X6M9C9nWF2nN09PDjYyw8O8nyfU/2eQzK/Y2Qp89/p8F0y/9B01nK6Z3y0U9HkOnUfP98++vBwdPd5mOVsSj27l2XfN6n/P7x80VpueF+K60Hje/5Cof8e9IdfPn776RfvfLx1/wE/3ByfHmS9nExG017ay0S7v5X6O8Mne+PDfXm37vTzZ5/sPnq6/2wv2xmFvE3I0W76V8o8Z3yU53u5/S/z/L976h/n07f+AnS8t93r8A3p/0H6+7973y5v+9qfD5P/D1P5N/9PAn7+6O6Xv3zw/Bf3f/3TR/e+vDvaj1mP2t72mPfomC84vX7Sz/pZv9fr8Nf6ve3B4Xg8PvWdfHq4/fnHh9ub+c6By9wUpc8YpI4/TOfkL9CndI3F5076/wH7p2X/0eHDm1vbX3y8u/N0kj37V5oF7v8uYv2XFzOnInofpZ+fP7pzcOfh4fN9+0vC/t/Cnv/v/wMvd3e/+eDB+w8OfvnB/v7+dHc4OToaHz8/OtgdTvYGU7uGBrL92P37X7/f271/f+fhvdO93XfD7X3O73S0u3v9Xfuf0P907O6O7uzmhzv/D5S7H+7sn7S1AAAAAElFTkSuQmCC"/>
+    <span class="text-xl font-bold tracking-tight text-primary uppercase">Antrix</span>
+</div>
+<button class="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20">
+    <span class="material-symbols-outlined text-2xl">account_circle</span>
+</button>
+</header>
 
 <main class="pt-24 pb-16 px-4 max-w-5xl mx-auto">
 
-    <!-- Breadcrumb -->
-    <div class="flex items-center gap-2 text-xs text-gray-400 mb-8 flex-wrap">
-        <span class="hover:text-primary cursor-pointer" onclick="window.location.href='../antrix_resume_upload/code.html'">Resume</span>
-        <span class="material-symbols-rounded text-sm">chevron_right</span>
-        <span class="hover:text-primary cursor-pointer" onclick="window.location.href='../antrix_role_selection/code.html'">Role</span>
-        <span class="material-symbols-rounded text-sm">chevron_right</span>
-        <span class="hover:text-primary cursor-pointer" onclick="window.location.href='../antrix_mode_selection/code.html'">Mode</span>
-        <span class="material-symbols-rounded text-sm">chevron_right</span>
-        <span class="font-semibold text-primary px-2 py-0.5 bg-primary/10 rounded-full">Difficulty</span>
-        <span class="material-symbols-rounded text-sm">chevron_right</span>
-        <span>Interview</span>
-        <span class="material-symbols-rounded text-sm">chevron_right</span>
-        <span>Feedback</span>
-    </div>
-
-    <!-- Progress Bar -->
-    <div class="mb-8">
-        <div class="flex justify-between items-center mb-1.5">
-            <span class="text-xs text-gray-400 uppercase font-semibold tracking-wider">Step 4 of 6</span>
-            <span class="text-xs text-primary font-semibold">67%</span>
-        </div>
-        <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-            <div class="h-full bg-primary rounded-full transition-all" style="width: 67%"></div>
-        </div>
-    </div>
+    <nav class="mb-16 max-w-2xl mx-auto">
+        <ol class="flex items-center justify-between w-full relative">
+            <div class="absolute top-1/2 left-0 w-full h-1 bg-primary/5 -translate-y-1/2 z-0 rounded-full"></div>
+            
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-white dark:border-background-dark">
+                    <span class="material-symbols-outlined text-xl">check</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary">Resume</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-white dark:border-background-dark">
+                    <span class="material-symbols-outlined text-xl">check</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary">Role</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-white dark:border-background-dark">
+                    <span class="material-symbols-outlined text-xl">check</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary">Mode</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-12 rounded-full bg-white dark:bg-slate-800 border-4 border-primary text-primary flex items-center justify-center shadow-xl transform scale-110">
+                    <span class="material-symbols-outlined text-2xl">psychology</span>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-widest text-primary">Level</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-white dark:bg-slate-800 border-2 border-primary/20 text-primary/30 flex items-center justify-center">
+                    <span class="text-[11px] font-bold">5</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary/30">Start</span>
+            </li>
+        </ol>
+    </nav>
 
     <!-- Heading -->
     <div class="mb-10">
@@ -111,67 +173,66 @@
         <p class="text-gray-500">Choose the difficulty level for the AI to analyze your interview performance.</p>
     </div>
 
-    <!-- Cards Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10" id="card-grid">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch mb-10" id="card-grid">
 
         <!-- Beginner -->
-        <div class="diff-card bg-white rounded-2xl p-7 shadow-sm relative" data-level="beginner" onclick="selectCard(this)">
-            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-5 transition-all">
+        <div class="diff-card rounded-2xl p-7 relative" data-level="beginner" onclick="selectCard(this)">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-6 transition-all">
                 <span class="material-symbols-rounded text-3xl text-gray-500">sentiment_satisfied</span>
             </div>
-            <h3 class="card-title text-lg font-bold text-gray-800 mb-2">Beginner</h3>
-            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-5">
-                Focuses on communication style and basic confidence markers.
+            <h3 class="card-title text-xl font-bold text-gray-800 mb-3">Beginner</h3>
+            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-6 flex-grow">
+                Ideal for building foundational confidence. Focuses on basic communication and standard question patterns.
             </p>
-            <div class="border-t border-gray-100 pt-4">
-                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Best For</p>
-                <p class="card-best text-sm font-semibold text-gray-700">Confidence building</p>
+            <div class="border-t border-gray-100/50 pt-5">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Target</p>
+                <p class="card-best text-sm font-semibold text-gray-700">Confidence Building</p>
             </div>
         </div>
 
         <!-- Intermediate -->
-        <div class="diff-card bg-white rounded-2xl p-7 shadow-sm relative" data-level="intermediate" onclick="selectCard(this)">
-            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-5 transition-all">
+        <div class="diff-card rounded-2xl p-7 relative" data-level="intermediate" onclick="selectCard(this)">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-6 transition-all">
                 <span class="material-symbols-rounded text-3xl text-blue-500">trending_up</span>
             </div>
-            <h3 class="card-title text-lg font-bold text-gray-800 mb-2">Intermediate</h3>
-            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-5">
-                Balanced check on technical accuracy and delivery.
+            <h3 class="card-title text-xl font-bold text-gray-800 mb-3">Intermediate</h3>
+            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-6 flex-grow">
+                Balanced evaluation of technical proficiency and behavioral response delivery.
             </p>
-            <div class="border-t border-gray-100 pt-4">
-                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Best For</p>
-                <p class="card-best text-sm font-semibold text-gray-700">General assessment</p>
+            <div class="border-t border-gray-100/50 pt-5">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Target</p>
+                <p class="card-best text-sm font-semibold text-gray-700">General Assessment</p>
             </div>
         </div>
 
         <!-- Advanced -->
-        <div class="diff-card bg-white rounded-2xl p-7 shadow-sm relative" data-level="advanced" onclick="selectCard(this)">
-            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mb-5 transition-all">
+        <div class="diff-card rounded-2xl p-7 relative" data-level="advanced" onclick="selectCard(this)">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mb-6 transition-all">
                 <span class="material-symbols-rounded text-3xl text-red-500">psychology</span>
             </div>
-            <h3 class="card-title text-lg font-bold text-gray-800 mb-2">Advanced</h3>
-            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-5">
-                Critical evaluation of depth, logic, and edge cases.
+            <h3 class="card-title text-xl font-bold text-gray-800 mb-3">Advanced</h3>
+            <p class="card-desc text-sm text-gray-500 leading-relaxed mb-6 flex-grow">
+                High-intensity trial focusing on depth, logic, and handling complex edge cases.
             </p>
-            <div class="border-t border-gray-100 pt-4">
-                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Best For</p>
-                <p class="card-best text-sm font-semibold text-gray-700">High-stakes prep</p>
+            <div class="border-t border-gray-100/50 pt-5">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Target</p>
+                <p class="card-best text-sm font-semibold text-gray-700">High-Stakes Prep</p>
             </div>
         </div>
 
-        <!-- Adaptive AI — pre-selected -->
-        <div class="diff-card adaptive-card rounded-2xl p-7 shadow-sm relative selected" data-level="adaptive" onclick="selectCard(this)">
+        <!-- Adaptive AI -->
+        <div class="diff-card adaptive-card rounded-2xl p-7 relative selected" data-level="adaptive" onclick="selectCard(this)">
             <div class="recommended-badge">Recommended</div>
-            <div class="card-icon-wrap w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all">
+            <div class="card-icon-wrap w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all">
                 <span class="material-symbols-rounded text-3xl">auto_awesome</span>
             </div>
-            <h3 class="card-title text-lg font-bold mb-2">Adaptive AI</h3>
-            <p class="card-desc text-sm leading-relaxed mb-5">
-                AI evaluates based on the actual difficulty of the conversation.
+            <h3 class="card-title text-xl font-bold mb-3">Adaptive AI</h3>
+            <p class="card-desc text-sm leading-relaxed mb-6 flex-grow">
+                Dynamically adjusts difficulty based on your performance in real-time.
             </p>
-            <div class="border-t border-white/20 pt-4">
-                <p class="card-label text-[10px] font-bold uppercase tracking-widest mb-1">Best For</p>
-                <p class="card-best text-sm font-semibold">Comprehensive report</p>
+            <div class="border-t border-white/20 pt-5">
+                <p class="card-label text-[10px] font-bold uppercase tracking-widest mb-1">Target</p>
+                <p class="card-best text-sm font-semibold">Maximum Growth</p>
             </div>
         </div>
 
@@ -180,10 +241,10 @@
     <!-- CTA -->
     <div class="flex flex-col items-center gap-3">
         <button id="btn-generate"
-            class="bg-primary text-white font-bold text-base px-10 py-4 rounded-2xl shadow-lg flex items-center gap-2"
+            class="bg-primary text-white font-bold text-base px-10 py-4 rounded-2xl shadow-lg flex items-center gap-2 group hover:gap-3 transition-all"
             onclick="goToInterview()">
-            Generate Feedback
-            <span class="material-symbols-rounded">bar_chart</span>
+            <span id="btn-text">Generate Feedback</span>
+            <span class="material-symbols-rounded group-hover:translate-x-1 transition-transform">bar_chart</span>
         </button>
         <p class="text-xs text-gray-400 flex items-center gap-1">
             <span class="material-symbols-rounded text-sm">info</span>
@@ -197,42 +258,27 @@
     let selectedLevel = 'adaptive'; // default
 
     function selectCard(el) {
-        // Remove selected from all non-adaptive cards
-        document.querySelectorAll('.diff-card:not(.adaptive-card)').forEach(c => {
+        // Remove selected from all cards
+        document.querySelectorAll('.diff-card').forEach(c => {
             c.classList.remove('selected');
-            c.querySelector('.card-icon-wrap').style.background = '';
-            c.querySelector('.card-icon-wrap').style.color = '';
         });
 
-        const isAdaptive = el.classList.contains('adaptive-card');
-
-        if (!isAdaptive) {
-            // Deselect adaptive
-            const adaptive = document.querySelector('.adaptive-card');
-            adaptive.classList.remove('selected');
-
-            // Select this card
-            el.classList.add('selected');
-        } else {
-            // Re-select adaptive
-            el.classList.add('selected');
-        }
+        // Select this card
+        el.classList.add('selected');
 
         selectedLevel = el.dataset.level;
         updateButton();
     }
 
     function updateButton() {
-        const btn = document.getElementById('btn-generate');
-        btn.disabled = false;
-
+        const btnText = document.getElementById('btn-text');
         const labels = {
             beginner: 'Start Beginner Interview',
             intermediate: 'Start Intermediate Interview',
             advanced: 'Start Advanced Interview',
             adaptive: 'Generate Feedback'
         };
-        btn.innerHTML = `${labels[selectedLevel] || 'Generate Feedback'} <span class="material-symbols-rounded">bar_chart</span>`;
+        btnText.innerText = labels[selectedLevel] || 'Generate Feedback';
     }
 
     function goToInterview() {
