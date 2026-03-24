@@ -6,8 +6,6 @@ import os
 import shutil
 from dotenv import load_dotenv
 
-load_dotenv()
-
 app = FastAPI()
 
 app.add_middleware(
@@ -17,6 +15,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+load_dotenv()
 
 # Initialize OpenAI client
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
