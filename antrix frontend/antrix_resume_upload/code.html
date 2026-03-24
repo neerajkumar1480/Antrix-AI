@@ -37,6 +37,7 @@
             font-family: "Space Grotesk", sans-serif;
         }
     </style>
+    <script src="../../config.js"></script>
 </head>
 <body class="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-slate-100">
 <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
@@ -101,17 +102,17 @@
                                 </p>
 </div>
 <!-- Drag & Drop Area -->
-<div class="border-2 border-dashed border-primary/30 rounded-xl p-10 bg-white/50 flex flex-col items-center justify-center gap-4 hover:border-primary transition-colors cursor-pointer group">
+<div id="upload-area" class="border-2 border-dashed border-primary/30 rounded-xl p-10 bg-white/50 flex flex-col items-center justify-center gap-4 hover:border-primary transition-colors cursor-pointer group">
 <div class="size-16 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
 <span class="material-symbols-outlined text-4xl">cloud_upload</span>
 </div>
 <div class="text-center">
-<p class="text-slate-900 font-bold text-lg">Click to upload or drag and drop</p>
+<p id="upload-text" class="text-slate-900 font-bold text-lg">Click to upload or drag and drop</p>
 <p class="text-slate-500 text-sm">PDF or DOCX (max. 10MB)</p>
 </div>
 <input class="hidden" id="resume-upload" type="file"/>
 </div>
-<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<button id="analyze-button" class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/25 flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
 <span class="material-symbols-outlined">analytics</span>
                                 Analyze Resume
                             </button>
@@ -172,12 +173,12 @@
 </footer>
 </div>
 </div>
-
 <script>
 (function () {
   const NEXT_PAGE = '../antrix_role_selection/code.html';
-  const GEMINI_API_KEY = 'AIzaSyDDFo8wXUQlCaE4vu5ln5QCxVJAeOTqOd0';
-  const GEMMA_MODEL = 'gemma-3-27b-it';
+  // Set your API key here. The previous key was disabled by Google due to being leaked.
+  const GEMINI_API_KEY = window.ENV?.GEMINI_API_KEY || 'YOUR_GOOGLE_AI_STUDIO_API_KEY';
+  const GEMINI_MODEL = 'gemini-2.5-flash';
 
   // ── DOM refs ──────────────────────────────────────────────────────────────
   const dropZone      = document.getElementById('upload-area') || document.querySelector('.border-dashed');
@@ -236,9 +237,7 @@
     if (previewContent) {
         previewContent.className = 'flex flex-col gap-4';
         previewContent.innerHTML = `
-            <div class="flex flex-col gap-2">
-                <p class="text-slate-700 text-sm leading-relaxed"><span class="font-bold">File:</span> ${file.name} (${(file.size / 1024).toFixed(2)} KB)</p>
-            </div>
+
             <p class="text-primary text-sm font-medium mt-2">
                 Ready for analysis. Click the button above to proceed.
             </p>
@@ -276,9 +275,7 @@
         previewSection.style.opacity = '1';
         previewContent.className = 'flex flex-col gap-4';
         previewContent.innerHTML = `
-            <div class="flex flex-col gap-2">
-                <p class="text-slate-700 text-sm leading-relaxed"><span class="font-bold">File:</span> ${uploadedFile.name} (${(uploadedFile.size / 1024).toFixed(2)} KB)</p>
-            </div>
+
             <p class="text-primary text-sm font-medium mt-2">
                 Extracting details with AI...
             </p>
@@ -287,32 +284,54 @@
       
       const reader = new FileReader();
       reader.onload = async (e) => {
-          const resumeText = e.target.result.slice(0, 8000);
           try {
-              sessionStorage.setItem('antrix_resume', resumeText);
+              if (!GEMINI_API_KEY || GEMINI_API_KEY === 'YOUR_GOOGLE_AI_STUDIO_API_KEY') {
+                  throw new Error("API Key is missing. Please edit code.html and add your GEMINI_API_KEY.");
+              }
+
+              const isPDF = uploadedFile.type === 'application/pdf' || uploadedFile.name.toLowerCase().endsWith('.pdf');
+              const promptText = "Extract all the text from this resume, preserving its content. Also extract the top technical skills (an array of up to 8 strings) and overall experience level (a short string like 'Junior Level', 'Mid-Senior Level', 'Senior'). Respond strictly in JSON format with exactly three keys: 'text', 'skills', and 'experience'.";
               
-              const prompt = "Extract the top technical skills and overall experience level from the following resume text. Respond strictly in JSON format with two keys: 'skills' (an array of up to 8 strings) and 'experience' (a short string like 'Junior Level', 'Mid-Senior Level', 'Senior'). Do not include any markdown formatting or code blocks. Resume text: " + resumeText;
-              const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMMA_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+              let reqBody;
+              if (isPDF) {
+                  const base64Data = e.target.result.split(',')[1];
+                  reqBody = {
+                      contents: [{role: "user", parts: [
+                          {text: promptText},
+                          {inlineData: {mimeType: "application/pdf", data: base64Data}}
+                      ]}],
+                      generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+                  };
+              } else {
+                  const textContent = await uploadedFile.text();
+                  reqBody = {
+                      contents: [{role: "user", parts: [
+                          {text: promptText + "\n\nResume content:\n" + textContent.slice(0, 10000)}
+                      ]}],
+                      generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+                  };
+              }
+              
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
               const res = await fetch(url, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    contents: [{role: "user", parts: [{text: prompt}]}],
-                    generationConfig: { temperature: 0.2 }
-                  })
+                  body: JSON.stringify(reqBody)
               });
               
-              if (!res.ok) throw new Error("API request failed");
-              const data = await res.json();
-              let textResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-              
-              if (textResponse.startsWith('\`\`\`json')) {
-                  textResponse = textResponse.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
-              } else if (textResponse.startsWith('\`\`\`')) {
-                  textResponse = textResponse.replace(/\`\`\`/g, '').trim();
+              if (!res.ok) {
+                  const errData = await res.json().catch(()=>({}));
+                  throw new Error(errData.error?.message || "API request failed with status " + res.status);
               }
+
+              const data = await res.json();
+              let textResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '{}';
               
               const parsed = JSON.parse(textResponse);
+              const extractedText = parsed.text || await uploadedFile.text().catch(()=>"");
+              
+              sessionStorage.setItem('antrix_resume', extractedText);
+              
               const skillsHTML = (parsed.skills || []).map(s => `<span class="px-3 py-1 bg-slate-100 rounded-lg text-sm font-medium text-slate-700">${s}</span>`).join('');
               
               analyzeBtn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Analysis Complete`;
@@ -320,9 +339,7 @@
               
               if (previewContent) {
                  previewContent.innerHTML = `
-                      <div class="flex flex-col gap-2">
-                          <p class="text-slate-700 text-sm leading-relaxed"><span class="font-bold">File:</span> ${uploadedFile.name} (${(uploadedFile.size / 1024).toFixed(2)} KB)</p>
-                      </div>
+
                       <div class="flex flex-col gap-2 mt-2">
                           <h4 class="text-sm font-bold text-slate-500 uppercase tracking-widest">Extracted Skills</h4>
                           <div class="flex flex-wrap gap-2">
@@ -341,14 +358,18 @@
               continueBtn.classList.remove('hidden');
           } catch (err) {
               console.error(err);
-              showError("Failed to extract details from the resume. Proceeding with basic info.");
+              showError("Extraction failed: " + err.message + " Proceeding with basic info.");
+              if (!isPDF) {
+                  const text = await uploadedFile.text().catch(()=>"");
+                  sessionStorage.setItem('antrix_resume', text.slice(0, 8000));
+              }
               analyzeBtn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Analysis Complete`;
               analyzeBtn.classList.replace('bg-primary', 'bg-green-600');
               continueBtn.classList.remove('hidden');
           }
       };
       reader.onerror = () => { showError("Failed to read file"); };
-      reader.readAsText(uploadedFile);
+      reader.readAsDataURL(uploadedFile);
     });
   }
 })();
