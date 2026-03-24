@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5F4A8B",
+                        "background-light": "#FEFACD",
+                        "background-dark": "#16161c",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                    },
+                },
+            },
+        }
+    </script>
+<title>Select Interview Mode | Antrix</title>
+<style>
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined' !important;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        text-transform: none !important;
+        display: inline-block;
+        line-height: 1;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+    }
+    .mode-card {
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+        background: white;
+    }
+    .mode-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 20px 40px rgba(95,74,139,0.12);
+        border-color: #5F4A8B;
+    }
+    .mode-card.selected {
+        border-color: #5F4A8B;
+        background-color: #FBFAFF;
+        box-shadow: 0 12px 30px rgba(95,74,139,0.2);
+    }
+    .mode-card.selected .icon-box {
+        background-color: #5F4A8B;
+        color: white;
+        transform: scale(1.1);
+    }
+    .mode-card.selected .selection-indicator {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .icon-box {
+        transition: all 0.3s ease;
+    }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+
+<!-- Nav -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-primary/10 px-6 md:px-20 py-4 bg-white/50 backdrop-blur-md sticky top-0 z-50">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='../antrix_home_page/code.html'">
+        <img alt="Antrix logo" class="size-10 object-contain" src="data:image/png;base64,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">
+        <span class="text-2xl font-bold tracking-tight text-primary uppercase">Antrix</span>
+    </div>
+    
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <a class="text-secondary-foreground/70 hover:text-primary transition-colors" href="../antrix_home_page/code.html">Home</a>
+        <a class="text-secondary-foreground/70 hover:text-primary transition-colors" href="../antrix_feedback_dashboard/code.html">Interviews</a>
+        <a class="text-secondary-foreground/70 hover:text-primary transition-colors" href="../pricing_page.html">Pricing</a>
+    </nav>
+    
+    <div class="flex items-center gap-4">
+        <button class="flex items-center justify-center rounded-full size-10 bg-primary/10 text-primary">
+            <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <button class="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 text-primary hover:bg-primary/5 transition-all" onclick="window.location.href='../antrix_feedback_dashboard/code.html'">
+            <span class="material-symbols-outlined text-lg">dashboard</span>
+            Dashboard
+        </button>
+        <button class="flex items-center justify-center rounded-full size-10 border-2 border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-all" onclick="window.location.href='../antrix_feedback_dashboard/code.html'">
+            <span class="material-symbols-outlined text-2xl">account_circle</span>
+        </button>
+    </div>
+</header>
+
+<main class="flex flex-1 flex-col items-center justify-start py-12 px-4 sm:px-6">
+<div class="w-full max-w-3xl">
+    <!-- Stepper -->
+    <nav class="mb-16 max-w-2xl mx-auto">
+        <ol class="flex items-center justify-between w-full relative">
+            <div class="absolute top-1/2 left-0 w-full h-1 bg-primary/5 -translate-y-1/2 z-0 rounded-full"></div>
+            
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-white dark:border-background-dark">
+                    <span class="material-symbols-outlined text-lg">check</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary">Resume</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg border-4 border-white dark:border-background-dark">
+                    <span class="material-symbols-outlined text-lg">check</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary">Role</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-12 rounded-full bg-white dark:bg-slate-800 border-4 border-primary text-primary flex items-center justify-center shadow-xl transform scale-110">
+                    <span class="material-symbols-outlined text-2xl">tune</span>
+                </div>
+                <span class="text-xs font-bold uppercase tracking-widest text-primary">Mode</span>
+            </li>
+            <li class="relative z-10 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full bg-white dark:bg-slate-800 border-2 border-primary/20 text-primary/30 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-lg">analytics</span>
+                </div>
+                <span class="text-[11px] font-bold uppercase tracking-widest text-primary/30">Difficulty</span>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Choose your interview mode</h2>
+        <p class="text-slate-600 dark:text-slate-400 text-lg">Select how you want to interact with our AI during the session.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+        <!-- Voice Mode -->
+        <div id="mode-voice" class="mode-card p-10 rounded-[2.5rem] relative overflow-hidden group border-2 border-slate-100" onclick="selectMode('voice')">
+            <div class="selection-indicator absolute top-6 right-6 opacity-0 transform scale-75 transition-all duration-300">
+                <div class="size-8 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                </div>
+            </div>
+            <div class="icon-box size-20 bg-primary/5 rounded-3xl flex items-center justify-center text-primary mb-10">
+                <span class="material-symbols-outlined text-5xl">mic</span>
+            </div>
+            <h3 class="text-3xl font-bold mb-5 tracking-tight text-slate-900 dark:text-white">Voice Based Interview</h3>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 text-lg">
+                Perfect for quick sessions. Practice your verbal communication, tone, and pacing with real-time voice feedback.
+            </p>
+            <div class="flex items-center gap-3 text-primary font-bold text-sm uppercase tracking-[0.2em] group-hover:gap-5 transition-all">
+                <span>Select Voice</span>
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </div>
+        </div>
+
+        <!-- Video Mode -->
+        <div id="mode-video" class="mode-card p-10 rounded-[2.5rem] relative overflow-hidden group border-2 border-slate-100" onclick="selectMode('video')">
+            <div class="selection-indicator absolute top-6 right-6 opacity-0 transform scale-75 transition-all duration-300">
+                <div class="size-8 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                </div>
+            </div>
+            <div class="icon-box size-20 bg-primary/5 rounded-3xl flex items-center justify-center text-primary mb-10">
+                <span class="material-symbols-outlined text-5xl">videocam</span>
+            </div>
+            <h3 class="text-3xl font-bold mb-5 tracking-tight text-slate-900 dark:text-white">Video Based Interview</h3>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 text-lg">
+                Most immersive experience. Get advanced insights on eye contact, posture, and facial expressions using AI analysis.
+            </p>
+            <div class="flex items-center gap-3 text-primary font-bold text-sm uppercase tracking-[0.2em] group-hover:gap-5 transition-all">
+                <span>Select Video</span>
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col items-center gap-6 mt-12 pb-20">
+        <button id="btn-continue" disabled class="bg-primary/10 text-primary/30 font-bold py-5 px-16 rounded-2xl transition-all cursor-not-allowed text-xl shadow-inner border border-primary/5 hover:scale-105 active:scale-95" onclick="nextStep()">
+            Continue to Difficulty
+        </button>
+        <div class="flex items-center gap-2 group">
+            <span class="text-slate-400 text-sm font-medium">Step 3 of 6</span>
+            <div class="h-1.5 w-24 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-1/2 transition-all duration-700"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+<footer class="py-8 px-6 text-center border-t border-primary/5 bg-white/40 dark:bg-background-dark/40">
+<p class="text-slate-500 text-sm">© 2024 Antrix AI. Build your dream career.</p>
+</footer>
+</div>
+
+<script>
+    let selectedMode = null;
+
+    function selectMode(mode) {
+        selectedMode = mode;
+        
+        // UI updates
+        document.querySelectorAll('.mode-card').forEach(card => card.classList.remove('selected'));
+        document.getElementById(`mode-${mode}`).classList.add('selected');
+        
+        const btn = document.getElementById('btn-continue');
+        btn.classList.remove('bg-primary/10', 'text-primary/30', 'cursor-not-allowed', 'shadow-inner');
+        btn.classList.add('bg-primary', 'text-white', 'hover:bg-primary/90', 'shadow-xl', 'shadow-primary/30', 'border-primary');
+        btn.disabled = false;
+        
+        // Pulse animation for the button
+        btn.classList.add('animate-bounce');
+        setTimeout(() => btn.classList.remove('animate-bounce'), 1000);
+    }
+
+    function nextStep() {
+        if (!selectedMode) return;
+        
+        // Save to sessionStorage
+        try {
+            sessionStorage.setItem('antrix_interview_mode', selectedMode);
+        } catch(e) {}
+        
+        window.location.href = '../antrix_difficulty_selection/code.html';
+    }
+</script>
+</body> </html>

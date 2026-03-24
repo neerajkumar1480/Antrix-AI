@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antrix Pricing</title>
+  <!-- Space Grotesk Font to match the main app -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#5F4A8B",
+                    "background-light": "#FEFACD",
+                    "background-dark": "#1a1910",
+                    "neutral-accent": "#5F4A8B",
+                },
+                fontFamily: {
+                    "display": ["Space Grotesk", "sans-serif"]
+                },
+                borderRadius: {
+                    "DEFAULT": "0.75rem",
+                    "lg": "1rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+                },
+            },
+        },
+    }
+  </script>
+  
+  <!-- React & ReactDOM CDNs -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Framer Motion -->
+  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <style>
+    body { background-color: #FEFACD; color: #0f172a; margin: 0; overflow-x: hidden; font-family: 'Space Grotesk', sans-serif; }
+    .material-symbols-outlined { font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    
+    .glass-card {
+      background-color: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(95, 74, 139, 0.1);
+      position: relative;
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen relative font-display selection:bg-primary/30">
+  
+  <!-- Top Navigation Header matching home page -->
+  <header class="absolute top-0 z-50 w-full border-b border-primary/10 bg-background-light/80 backdrop-blur-md px-6 md:px-20 py-4">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <a class="flex items-center gap-2.5 cursor-pointer" href="antrix_home_page/code.html">
+              <img alt="Antrix Logo" class="h-8 w-auto" src="data:image/png;base64,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"/>
+              <span class="text-xl font-bold tracking-tight text-primary">Antrix</span>
+          </a>
+      </div>
+  </header>
+  
+  <!-- Light subtle background elements -->
+  <div class="fixed inset-0 z-0 pointer-events-none" style="background-image: radial-gradient(circle at center, rgba(95,74,139,0.05) 1px, transparent 1px); background-size: 40px 40px;"></div>
+  
+  <div id="root" class="relative z-10 pt-20"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { motion, AnimatePresence } = window.Motion;
+
+    const ParticleExplosion = ({ x, y, color }) => {
+      useEffect(() => {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { x: x / window.innerWidth, y: y / window.innerHeight },
+          colors: [color, '#5F4A8B', '#ffffff'],
+          disableForReducedMotion: true,
+          ticks: 200,
+          gravity: 0.6,
+          scalar: 0.9,
+          startVelocity: 30,
+          zIndex: 0
+        });
+      }, [x, y, color]);
+      return null;
+    };
+
+    const PricingCard = ({ tier, delay }) => {
+      const [isHovered, setIsHovered] = useState(false);
+      const [explosion, setExplosion] = useState(null);
+
+      const handleSelect = (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setExplosion({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, id: Date.now() });
+      };
+
+      const floatAnimate = {
+        y: [0, -8, 0],
+        rotate: [0, 1, -1, 0],
+        transition: {
+          duration: 6,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: delay
+        }
+      };
+
+      let glowClass = "shadow-lg shadow-primary/5 hover:shadow-xl hover:shadow-primary/10";
+      let btnColor = "bg-white border-2 border-primary/20 text-primary hover:bg-primary/5";
+      let particleColor = "#5F4A8B";
+      let iconColor = "text-primary/60";
+      let borderClass = "border-primary/5 hover:border-primary/20";
+      
+      if (tier.name === "Standard") {
+        borderClass = "border-primary/30 shadow-primary/20 hover:border-primary/50 hover:shadow-primary/30";
+        btnColor = "bg-primary text-white hover:bg-primary/90 shadow-[0_4px_20px_rgba(95,74,139,0.3)]";
+        particleColor = "#5F4A8B";
+        iconColor = "text-primary";
+      } else if (tier.name === "Premium") {
+        borderClass = "border-slate-800/20 shadow-slate-800/10 hover:border-slate-800/40 hover:shadow-slate-800/20";
+        btnColor = "bg-slate-900 text-white hover:bg-slate-800 shadow-[0_4px_20px_rgba(15,23,42,0.3)]";
+        particleColor = "#0f172a";
+        iconColor = "text-slate-800";
+      }
+
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: delay * 0.3 }}
+          className="relative h-full flex"
+        >
+          {explosion && <ParticleExplosion key={explosion.id} x={explosion.x} y={explosion.y} color={particleColor} />}
+          
+          <motion.div
+            animate={isHovered ? { y: -15, scale: 1.02 } : floatAnimate}
+            onHoverStart={() => setIsHovered(true)}
+            onHoverEnd={() => setIsHovered(false)}
+            className={`glass-card rounded-[2rem] p-8 flex flex-col w-full transition-all duration-300 z-10 ${glowClass} ${borderClass}`}
+          >
+            {tier.popular && (
+              <div className="absolute -top-4 w-full left-0 flex justify-center">
+                <div className="px-4 py-1.5 bg-primary text-white rounded-full text-xs font-bold tracking-widest uppercase shadow-lg shadow-primary/30">
+                  Most Popular
+                </div>
+              </div>
+            )}
+            
+            <div className="mb-8 mt-2">
+              <h3 className="text-primary/60 text-sm font-bold tracking-widest uppercase mb-2">{tier.subtitle}</h3>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-bold tracking-tight text-primary">{tier.name}</span>
+              </div>
+              <div className="mt-4 text-5xl font-bold tracking-tighter text-slate-800">${tier.price}<span className="text-lg text-slate-500 font-medium">/mo</span></div>
+            </div>
+
+            <div className="flex-1">
+              <ul className="space-y-4 mb-10">
+                {tier.features.map((feat, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <svg className={`w-5 h-5 mt-0.5 shrink-0 ${iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="text-slate-700 font-medium leading-snug">{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <button 
+              onClick={handleSelect}
+              className={`w-full py-4 rounded-xl font-bold transition-all duration-300 text-lg ${btnColor}`}
+            >
+              Select Plan
+            </button>
+          </motion.div>
+        </motion.div>
+      );
+    };
+
+    const PricingPage = () => {
+      const tiers = [
+        {
+          name: "Basic",
+          subtitle: "Explorer",
+          price: "0",
+          features: [
+            "Resume Based Mock Interviews",
+            "Voice Based Conversational AI",
+            "Instant Automated Marking",
+            "Personalized Progress Tracker",
+            "Basic Performance Feedback"
+          ],
+          popular: false
+        },
+        {
+          name: "Standard",
+          subtitle: "Pro",
+          price: "5",
+          features: [
+            "Everything in Basic Plan",
+            "AI Video Analysis (Emotion & Body Language)",
+            "Posture & Confidence Scoring",
+            "Filler Word Detection & Analytics",
+            "Goal-Oriented Actionable Pings"
+          ],
+          popular: true
+        },
+        {
+          name: "Premium",
+          subtitle: "Elite",
+          price: "19",
+          features: [
+            "Everything in Standard Plan",
+            "Specialized Technical & DSA Rounds",
+            "Custom Interview Round Selector",
+            "Problem-Based Deep Dive Sessions",
+            "VIP Mentorship & Scenario Creator"
+          ],
+          popular: false
+        }
+      ];
+
+      return (
+        <div className="min-h-screen py-16 px-6 relative overflow-hidden flex flex-col items-center">
+          
+          {/* Subtle Ambient Nebulas matching light theme */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-300/20 rounded-full blur-[120px] pointer-events-none mix-blend-multiply"></div>
+
+          <div className="max-w-6xl w-full mx-auto relative z-10 flex flex-col items-center mt-10">
+            
+            <motion.div 
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="text-center mb-20 w-full"
+            >
+              <div className="inline-block px-5 py-2 bg-primary/10 text-primary text-sm font-bold uppercase tracking-widest rounded-full mb-6 relative">
+                 Simple, Transparent Pricing
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-primary">Invest in your career.</h1>
+              <p className="text-xl text-slate-700 font-medium max-w-2xl mx-auto leading-relaxed">Choose the plan that perfectly fits your ambition and unlock the full power of AI interview preparation.</p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 items-stretch w-full mb-20">
+              {tiers.map((tier, i) => (
+                <PricingCard key={tier.name} tier={tier} delay={i} />
+              ))}
+            </div>
+            
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<PricingPage />);
+  </script>
+</body>
+</html>
